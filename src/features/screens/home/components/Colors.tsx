@@ -1,15 +1,24 @@
+import { useAppDispatch, useAppSelector } from "@/hooks";
+import { setColor } from "@/redux/slices/app";
 import { Flex, SegmentedControl, Text } from "@radix-ui/themes";
-import { useState } from "react";
 
 export interface Colors {}
 
 export const Colors = ({}: Colors) => {
-  const [Colors, setColors] = useState([]);
+  const dispatch = useAppDispatch();
+  const { color } = useAppSelector((state) => state.appReducer);
+
+  const setColorAction = (val: string) => {
+    dispatch(setColor(val));
+  };
 
   return (
     <Flex direction={"column"} gap={"2"}>
       <Text size={"2"}>Color:</Text>
-      <SegmentedControl.Root defaultValue="#5753c6">
+      <SegmentedControl.Root
+        defaultValue={color}
+        onValueChange={(val) => setColorAction(val)}
+      >
         <SegmentedControl.Item value="#5753c6">
           <Text color="iris" weight={"bold"}>
             Iris

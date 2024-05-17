@@ -25,3 +25,22 @@ export interface IMockup {
   uuid: string;
   thumbnail?: string;
 }
+
+export interface SingleRenderRes {
+  export_label: string;
+  export_path: string;
+}
+
+export interface SingleRenderReq {
+  mockup_uuid: string;
+  export_label?: string;
+  smart_objects: {
+    uuid: string;
+    asset?: {
+      file?: File;
+      url?: string;
+      fit?: string;
+    };
+    color?: string;
+  }[];
+}

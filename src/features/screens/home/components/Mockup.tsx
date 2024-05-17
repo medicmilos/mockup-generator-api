@@ -1,13 +1,19 @@
 import { Button, Flex, Text, Tooltip } from "@radix-ui/themes";
 import PhotoshopIcon from "@/assets/photoshop.png";
 import { IMockup } from "@/services/types";
+import { useAppDispatch, useAppSelector } from "@/hooks";
+import { setSelectedMockup } from "@/redux/slices/app";
 
 export interface Mockup {
   mockup: IMockup;
 }
 
 export const Mockup = ({ mockup }: Mockup) => {
+  const dispatch = useAppDispatch();
+  const { selectedMockup } = useAppSelector((state) => state.appReducer);
+
   const loadMockup = (uuid: string) => {
+    dispatch(setSelectedMockup(mockup));
     console.log(uuid);
   };
 
@@ -15,7 +21,9 @@ export const Mockup = ({ mockup }: Mockup) => {
     <Flex
       direction={"column"}
       gap={"3"}
-      className={"photoshop-files-single-template"}
+      className={`photoshop-files-single-template ${
+        mockup.uuid === selectedMockup?.uuid ? "selected" : ""
+      }`}
     >
       <Flex align={"center"} justify={"between"}>
         <Flex align={"center"} gap={"1"}>
@@ -38,8 +46,12 @@ export const Mockup = ({ mockup }: Mockup) => {
         />
 
         <Flex className="text-wrapper" align={"end"} p={"4"}>
-          <Button size={"1"} onClick={() => loadMockup(mockup.uuid)}>
-            Use Mockup
+          <Button
+            size={"1"}
+            onClick={() => loadMockup(mockup.uuid)}
+            disabled={mockup.uuid === selectedMockup?.uuid}
+          >
+            {mockup.uuid === selectedMockup?.uuid ? "Selected" : "Select Mockup"}
           </Button>
         </Flex>
       </Flex>

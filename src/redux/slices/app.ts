@@ -1,8 +1,19 @@
+import { appApi } from "@/services/app";
+import { IMockup, SingleRenderRes } from "@/services/types";
 import { createSlice } from "@reduxjs/toolkit";
+import { fitModes } from "./types";
 
 interface AppState {
   themeMode: "inherit" | "light" | "dark" | undefined;
   apiKey: string;
+  selectedMockup: IMockup;
+  mockups: {
+    data: IMockup[];
+    isLoading: boolean;
+  };
+  color: string;
+  fitMode: fitModes;
+  singleRender: { data: SingleRenderRes; isLoading: boolean };
 }
 
 const userPrefferedThemeMode = window.localStorage.getItem("app-theme");
@@ -19,6 +30,20 @@ const initialState: AppState = {
     systemTheme ||
     "light") as AppState["themeMode"],
   apiKey: dynamicMockupsApiKey || "",
+  mockups: {
+    data: [],
+    isLoading: false,
+  },
+  color: "#5753c6",
+  fitMode: "contain",
+  selectedMockup: null!,
+  singleRender: {
+    data: {
+      export_label: "",
+      export_path: "",
+    },
+    isLoading: false,
+  },
 };
 
 export const appSlice = createSlice({
@@ -35,10 +60,58 @@ export const appSlice = createSlice({
       state.apiKey = payload;
       localStorage.setItem("dynamicMockupsApiKey", payload);
     },
-    resetAppState: () => initialState,
+    setSelectedMockup(state, { payload }) {
+      state.selectedMockup = payload;
+    },
+    setColor(state, { payload }) {
+      state.color = payload;
+    },
+    setFitMode(state, { payload }) {
+      state.fitMode = payload;
+    },
+    resetAppState: (state) => {
+      localStorage.removeItem("dynamicMockupsApiKey");
+      return initialState;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addMatcher(
+        appApi.endpoints.getMockups.matchFulfilled,
+        (state, response) => {
+          state.mockups.data = response.payload.data;
+          state.mockups.isLoading = false;
+        }
+      )
+      .addMatcher(
+        appApi.endpoints.getMockups.matchPending,
+        (state, response) => {
+          state.mockups.isLoading = true;
+        }
+      )
+      .addMatcher(
+        appApi.endpoints.generateSingleRender.matchFulfilled,
+        (state, response) => {
+          state.singleRender.data = response.payload.data;
+          state.singleRender.isLoading = false;
+        }
+      )
+      .addMatcher(
+        appApi.endpoints.generateSingleRender.matchPending,
+        (state, response) => {
+          state.singleRender.isLoading = true;
+        }
+      );
   },
 });
 
 export default appSlice.reducer;
 
-export const { setThemeMode, setApiKey, resetAppState } = appSlice.actions;
+export const {
+  setThemeMode,
+  setApiKey,
+  resetAppState,
+  setSelectedMockup,
+  setColor,
+  setFitMode,
+} = appSlice.actions;

@@ -7,8 +7,9 @@ import {
   TextField,
   Text,
   ScrollArea,
+  IconButton,
 } from "@radix-ui/themes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EditorV2 } from "./components/EditorV2";
 import { Colors } from "./components/Colors";
 import { FitModes } from "./components/FitModes";
@@ -17,7 +18,13 @@ import { PreviewImage } from "./components/PreviewImage";
 import { Mockup } from "./components/Mockup";
 import { appApi } from "@/services/app";
 import { useAppDispatch, useAppSelector } from "@/hooks";
-import { setApiKey } from "@/redux/slices/app";
+import { resetAppState, setApiKey } from "@/redux/slices/app";
+import { Mockups } from "./components/Mockups";
+import {
+  Cross2Icon,
+  DotsHorizontalIcon,
+  EyeClosedIcon,
+} from "@radix-ui/react-icons";
 
 export interface IAssetFileConfig {
   url: string;
@@ -52,7 +59,7 @@ const activeDesignAsset = {
   left: 0,
   rotate: 0,
   asset_path:
-    "https://t4.ftcdn.net/jpg/02/66/72/41/360_F_266724172_Iy8gdKgMa7XmrhYYxLCxyhx6J7070Pr8.jpg",
+    "https://cdni.iconscout.com/illustration/premium/thumb/cat-doing-space-surfing-4238796-3518554.png",
 };
 
 const activeSmartObject = {
@@ -74,9 +81,15 @@ export interface SingleMockup {
 
 export const Home = () => {
   const dispatch = useAppDispatch();
-  const { apiKey } = useAppSelector((state) => state.appReducer);
+  const { apiKey, fitMode, color, selectedMockup } = useAppSelector(
+    (state) => state.appReducer
+  );
 
   const [key, setKey] = useState<string>(apiKey);
+
+  useEffect(() => {
+    setKey(apiKey);
+  }, [apiKey]);
 
   const [assetFileConfig, setAssetFileConfig] = useState<IAssetFileConfig>({
     width: activeDesignAsset.width || 50,
@@ -93,17 +106,50 @@ export const Home = () => {
     rotate: activeDesignAsset?.rotate || 0,
   });
 
-  const getMockups = appApi.useGetMockupsQuery(null, {
+  appApi.useGetMockupsQuery(null, {
     skip: !apiKey,
     refetchOnMountOrArgChange: true,
   });
 
+  const [generateSingleRender, { isLoading: isGenerating }] =
+    appApi.useGenerateSingleRenderMutation();
+
   const apiCallUpdateAsset = async (data: Partial<IAssetFileConfig>) => {
     console.log(data);
+
+    const smData = {
+      print_area: activeSmartObject?.print_area,
+      fit: activeSmartObject?.fit,
+      global_asset_top: data.design_area_top,
+      global_asset_left: data.design_area_left,
+      global_asset_width: data.design_area_width,
+      global_asset_height: data.design_area_height,
+    };
+
+    const renderData = {
+      mockup_uuid: selectedMockup.uuid,
+      export_label: "demo render",
+      smart_objects: [
+        {
+          uuid: selectedMockup.smart_objects[0].uuid,
+          asset: {
+            url: "https://cdni.iconscout.com/illustration/premium/thumb/cat-doing-space-surfing-4238796-3518554.png",
+            fit: fitMode,
+          },
+          color: color,
+        },
+      ],
+    };
+
+    await generateSingleRender(renderData);
   };
 
   const setApiKeyAction = () => {
     dispatch(setApiKey(key));
+  };
+
+  const clearApiKeyAction = () => {
+    dispatch(resetAppState());
   };
 
   return (
@@ -115,7 +161,18 @@ export const Home = () => {
             type="password"
             value={key}
             onChange={(e) => setKey(e.target.value)}
-          />
+          >
+            <TextField.Slot></TextField.Slot>
+            <TextField.Slot>
+              <IconButton
+                size="1"
+                variant="ghost"
+                onClick={() => clearApiKeyAction()}
+              >
+                <Cross2Icon height="14" width="14" />
+              </IconButton>
+            </TextField.Slot>
+          </TextField.Root>
           <Button onClick={() => setApiKeyAction()}>Set API Key</Button>
         </Flex>
         <Tabs.Root defaultValue="public">
@@ -126,21 +183,11 @@ export const Home = () => {
 
           <Box pt="3">
             <Tabs.Content value="public">
-              <ScrollArea
-                type={"hover"}
-                scrollbars={"vertical"}
-                style={{ height: "calc(100vh - 132px)" }}
-              >
-                <Grid columns={"1fr"} gap={"2"} pr={"4"}>
-                  {getMockups.data?.data.map((mockup) => (
-                    <Mockup key={mockup.uuid} mockup={mockup} />
-                  ))}
-                </Grid>
-              </ScrollArea>
+              <Mockups />
             </Tabs.Content>
 
             <Tabs.Content value="custom">
-              <Text size="2">Access and update your custom.</Text>
+              <Mockups />
             </Tabs.Content>
           </Box>
         </Tabs.Root>
