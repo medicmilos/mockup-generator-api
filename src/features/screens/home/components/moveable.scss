@@ -1,0 +1,154 @@
+.asset-editor-wrapper {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  .canvas-wrapper {
+    height: 100%;
+    width: 100%;
+    min-height: 300px;
+    min-width: 300px;
+    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
+    overflow: hidden;
+    background: var(--slate-1);
+    border-radius: 4px;
+    border: 1px solid var(--slate-7);
+
+    background-image: radial-gradient(var(--slate-7) 1px, transparent 0);
+    background-size: 24px 24px;
+    background-position: -28px -28px;
+  }
+
+  .target-design-asset-contain {
+    object-fit: contain;
+  }
+  .target-design-asset-stretch {
+    object-fit: fill;
+  }
+  .target-design-asset-cover {
+    object-fit: cover;
+  }
+  .target-design-asset {
+    object-position: 50% 50%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    overflow: visible;
+    width: 100%;
+    height: 100%;
+  }
+
+  .editor-moveable .moveable-line {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--blue-9);
+    transform-origin: 0px 0.5px;
+  }
+
+  .editor-moveable .moveable-control {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 100%;
+    border: 2px solid var(--blue-9);
+    background: white;
+    margin-top: -7px;
+    margin-left: -7px;
+    z-index: 10;
+
+    &[data-direction="e"],
+    &[data-direction="w"] {
+      width: 14px;
+      height: 40px;
+      border-radius: 8px;
+      margin-top: -20px;
+    }
+
+    &[data-direction="n"],
+    &[data-direction="s"] {
+      width: 40px;
+      height: 14px;
+      border-radius: 8px;
+      margin-left: -20px;
+    }
+  }
+
+  .editor-target {
+    position: absolute;
+    box-sizing: border-box;
+    background-color: transparent;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    &:hover {
+      cursor: move;
+    }
+  }
+
+  .editor-canvas {
+    position: relative;
+    border: 1px dotted var(--blue-9);
+  }
+
+  .position-buttons-wrapper {
+    button {
+      width: 29%;
+      color: var(--gray-12);
+    }
+    svg {
+      stroke: var(--gray-12);
+    }
+  }
+
+  &.print-area-enabled {
+    .editor-moveable .moveable-line {
+      background: repeating-linear-gradient(
+        to right,
+        transparent,
+        transparent 5px,
+        var(--purple-9) 5px,
+        var(--purple-9) 10px
+      );
+    }
+
+    .editor-moveable .moveable-control {
+      border: 2px solid var(--purple-9);
+    }
+    .editor-target {
+      background-color: rgba(146, 0, 237, 0.055);
+    }
+    .editor-moveable .moveable-line.moveable-rotation-line {
+      background: var(--purple-9);
+    }
+
+    .editor-moveable .moveable-guideline {
+      background: var(--purple-9);
+    }
+  }
+
+  &.print-area-disabled {
+    .editor-moveable .moveable-line {
+      background: var(--purple-9);
+    }
+
+    .editor-moveable .moveable-control {
+      border: 2px solid var(--purple-9);
+    }
+    .editor-target {
+      background-color: rgba(146, 0, 237, 0.055);
+      background-size: 100% 100%;
+    }
+    .editor-moveable .moveable-line.moveable-rotation-line {
+      background: var(--purple-9);
+    }
+    .editor-moveable .moveable-guideline {
+      background: var(--purple-9);
+    }
+  }
+}
