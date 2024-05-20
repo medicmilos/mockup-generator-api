@@ -11,7 +11,7 @@ export const Mockups = ({}: IMockups) => {
     <ScrollArea
       type={"hover"}
       scrollbars={"vertical"}
-      style={{ height: "calc(100vh - 132px)" }}
+      style={{ height: "calc(100vh - 180px)" }}
     >
       {mockups.data.length === 0 && !mockups.isLoading ? (
         <Text size={"2"}>Set API Key to see available Mockups</Text>

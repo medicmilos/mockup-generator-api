@@ -3,10 +3,11 @@ import Moveable from "react-moveable";
 import "./moveable.scss";
 import { Box, Flex } from "@radix-ui/themes";
 import { IActiveSmartObject, IAssetFileConfig } from "../Home";
+import { SmartObject } from "@/services/temp";
+import { useAppSelector } from "@/hooks";
 
 interface IEditorV2Props {
   assetFileConfig: IAssetFileConfig;
-  activeSmartObject: IActiveSmartObject;
   apiCallUpdateAsset: (data: Partial<IAssetFileConfig>) => void;
 }
 
@@ -26,13 +27,15 @@ interface IAssetFile {
 
 export const EditorV2 = ({
   assetFileConfig,
-  activeSmartObject,
   apiCallUpdateAsset,
 }: IEditorV2Props) => {
   const targetRef = useRef<HTMLDivElement>(null);
+  const { activeSmartObject, design } = useAppSelector(
+    (state) => state.appReducer
+  );
 
   const [moveableKey, setMoveableKey] = useState<number>(0);
-  const [maxCanvasSize, setmaxCanvasSize] = useState<number>(260);
+  const [maxCanvasSize, setmaxCanvasSize] = useState<number>(400);
 
   const [assetFile, setAssetFile] = useState<IAssetFile>(() => null!);
   const [scaledAssetFile, setScaledAssetFile] = useState<IAssetFile>(null!);
@@ -65,7 +68,9 @@ export const EditorV2 = ({
         return prev + 1;
       });
 
-      scaleAssetFile();
+      if (assetFile.canvasHeight && assetFile.canvasWidth) {
+        scaleAssetFile();
+      }
     }
   }, [assetFile, activeSmartObject]);
 
@@ -153,7 +158,9 @@ export const EditorV2 = ({
                 className="editor-target"
                 ref={targetRef}
                 style={{
-                  backgroundImage: `url(${assetFileConfig.url})`,
+                  backgroundImage: `url(${
+                    design.url || URL.createObjectURL(design.file as File)
+                  })`,
                   width: scaledAssetFile.imageWidth,
                   height: scaledAssetFile.imageHeight,
                   top: scaledAssetFile.imageY,
@@ -175,7 +182,7 @@ export const EditorV2 = ({
                 }}
               >
                 <img
-                  src={assetFileConfig.url}
+                  src={design.url || URL.createObjectURL(design.file as File)}
                   className={`target-design-asset ${
                     activeSmartObject?.fit === "contain" &&
                     "target-design-asset-contain"

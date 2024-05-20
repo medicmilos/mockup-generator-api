@@ -14,7 +14,6 @@ export const Mockup = ({ mockup }: Mockup) => {
 
   const loadMockup = (uuid: string) => {
     dispatch(setSelectedMockup(mockup));
-    console.log(uuid);
   };
 
   return (
@@ -51,7 +50,9 @@ export const Mockup = ({ mockup }: Mockup) => {
             onClick={() => loadMockup(mockup.uuid)}
             disabled={mockup.uuid === selectedMockup?.uuid}
           >
-            {mockup.uuid === selectedMockup?.uuid ? "Selected" : "Select Mockup"}
+            {mockup.uuid === selectedMockup?.uuid
+              ? "Selected"
+              : "Select Mockup"}
           </Button>
         </Flex>
       </Flex>

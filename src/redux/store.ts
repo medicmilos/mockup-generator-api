@@ -2,10 +2,12 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query/react";
 import appReducer from "./slices/app";
 import { appApi } from "@/services/app";
+import { tempApi } from "@/services/temp";
 
 const combinedReducer = combineReducers({
   appReducer,
   [appApi.reducerPath]: appApi.reducer,
+  [tempApi.reducerPath]: tempApi.reducer,
 });
 
 export type RootState = ReturnType<typeof combinedReducer>;
@@ -17,6 +19,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false }).concat([
       appApi.middleware,
+      tempApi.middleware,
     ]),
 });
 

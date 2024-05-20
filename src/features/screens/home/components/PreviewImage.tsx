@@ -1,11 +1,10 @@
-import { useAppDispatch, useAppSelector } from "@/hooks";
+import { useAppSelector } from "@/hooks";
 import { Flex, Skeleton, Spinner } from "@radix-ui/themes";
-import { useState } from "react";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 export interface PreviewImage {}
 
 export const PreviewImage = ({}: PreviewImage) => {
-  const dispatch = useAppDispatch();
   const { singleRender } = useAppSelector((state) => state.appReducer);
 
   return (
@@ -16,14 +15,26 @@ export const PreviewImage = ({}: PreviewImage) => {
       justify={"center"}
       height={"300px"}
     >
-      {!singleRender.isLoading ? (
-        <img
-          src={
-            singleRender.data.export_path ||
-            "https://placehold.co/800x500?text=IMAGE RENDER"
-          }
-        />
-      ) : (
+      {singleRender.data.export_path ? (
+        <Flex align={"center"} justify={"center"}>
+          {singleRender.isLoading && <Spinner size={"3"} className="spinner" />}
+          <LazyLoadImage
+            style={{
+              filter: singleRender.isLoading ? "blur(3px)" : "blur(0)",
+            }}
+            effect="blur"
+            src={
+              singleRender.data.export_path ||
+              "https://placehold.co/800x500?text=IMAGE RENDER"
+            }
+            delayTime={0}
+            placeholderSrc={
+              singleRender.data.export_path ||
+              "https://placehold.co/800x500?text=IMAGE RENDER"
+            }
+          />
+        </Flex>
+      ) : singleRender.isLoading ? (
         <Flex
           width={"100%"}
           height={"100%"}
@@ -33,6 +44,13 @@ export const PreviewImage = ({}: PreviewImage) => {
           <Skeleton width={"100%"} height={"100%"} />
           <Spinner className="spinner" size={"3"} />
         </Flex>
+      ) : (
+        <LazyLoadImage
+          effect="blur"
+          src={"https://placehold.co/800x500?text=IMAGE RENDER"}
+          delayTime={0}
+          placeholderSrc={"https://placehold.co/800x500?text=IMAGE RENDER"}
+        />
       )}
     </Flex>
   );

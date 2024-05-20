@@ -17,12 +17,13 @@ export const appApi = createApi({
     }),
     generateSingleRender: builder.mutation<
       DataModel<SingleRenderRes>,
-      Partial<SingleRenderReq>
+      FormData
     >({
       query: (payload) => ({
         url: `renders`,
         method: "POST",
         body: payload,
+        formData: true,
       }),
     }),
   }),

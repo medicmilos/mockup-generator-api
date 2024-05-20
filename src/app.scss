@@ -2,6 +2,11 @@
   background: var(--slate-1);
 }
 
+.editor {
+  border-right: 1px solid var(--slate-6);
+  border-left: 1px solid var(--slate-6);
+}
+
 .api-key-input-wraper {
   .rt-TextFieldRoot {
     width: 100%;
@@ -10,6 +15,10 @@
 
 .preview-image-wrapper {
   position: relative;
+  .lazy-load-image-background {
+    height: 300px;
+    object-fit: contain;
+  }
   img {
     object-fit: contain;
     width: 100%;
@@ -17,6 +26,42 @@
   }
   .spinner {
     position: absolute;
+    z-index: 1;
+  }
+}
+
+.add-design-wrapper {
+  .rt-TextFieldRoot {
+    width: 100%;
+  }
+  input[type="file"] {
+    max-width: 100%;
+    padding: 5px 15px;
+    border-radius: 4px;
+    border: 1px solid #cbcdd5;
+  }
+  input[type="file"]::file-selector-button {
+    border: none;
+    font-family: var(--default-font-family);
+    font-style: normal;
+    text-align: center;
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+    background-color: var(--accent-9);
+    color: var(--accent-contrast);
+    gap: var(--space-2);
+    font-size: var(--font-size-2);
+    line-height: var(--line-height-2);
+    letter-spacing: var(--letter-spacing-2);
+    --base-button-classic-active-padding-top: 2px;
+    --base-button-height: var(--space-6);
+    border-radius: max(var(--radius-2), var(--radius-full));
+    height: var(--base-button-height);
+    font-weight: var(--font-weight-medium);
+  }
+
+  input[type="file"]::file-selector-button:hover {
+    background-color: var(--accent-10);
   }
 }
 
