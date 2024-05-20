@@ -13,7 +13,6 @@ export const PreviewImage = ({}: PreviewImage) => {
       direction={"column"}
       align={"center"}
       justify={"center"}
-      height={"300px"}
     >
       {singleRender.data.export_path ? (
         <Flex align={"center"} justify={"center"}>

@@ -1,11 +1,13 @@
 import { RouterProvider } from "react-router-dom";
 import { AppRoutes } from "@/routes";
-import { Theme } from "@radix-ui/themes";
+import { Box, Theme } from "@radix-ui/themes";
 
 export const App = () => {
   return (
     <Theme appearance={"light"} accentColor="blue">
-      <RouterProvider router={AppRoutes} />
+      <Box height={"100%"} style={{ maxWidth: "2560px", margin: "0 auto" }}>
+        <RouterProvider router={AppRoutes} />
+      </Box>
     </Theme>
   );
 };

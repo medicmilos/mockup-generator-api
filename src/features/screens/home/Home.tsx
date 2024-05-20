@@ -5,8 +5,6 @@ import {
   Grid,
   Tabs,
   TextField,
-  Text,
-  ScrollArea,
   IconButton,
 } from "@radix-ui/themes";
 import { useEffect, useState } from "react";
@@ -15,7 +13,6 @@ import { Colors } from "./components/Colors";
 import { FitModes } from "./components/FitModes";
 import { CodeEditor } from "./components/CodeEditor";
 import { PreviewImage } from "./components/PreviewImage";
-import { Mockup } from "./components/Mockup";
 import { appApi } from "@/services/app";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import {
@@ -25,11 +22,7 @@ import {
   updateActiveSmartObject,
 } from "@/redux/slices/app";
 import { Mockups } from "./components/Mockups";
-import {
-  Cross2Icon,
-  DotsHorizontalIcon,
-  EyeClosedIcon,
-} from "@radix-ui/react-icons";
+import { Cross2Icon } from "@radix-ui/react-icons";
 import { tempApi } from "@/services/temp";
 import { AddDesign } from "./components/AddDessign";
 
@@ -239,7 +232,7 @@ export const Home = () => {
   };
 
   return (
-    <Grid className={"app"} columns={"1fr 2fr 3fr"} p={"4"} height={"100%"}>
+    <Grid className={"app"} p={"4"} height={"100%"}>
       <Flex direction={"column"} gap={"4"} p={"2"}>
         <Flex className="api-key-input-wraper" gap={"3"}>
           <TextField.Root
@@ -309,7 +302,7 @@ export const Home = () => {
         <Colors />
         <FitModes />
       </Flex>
-      <Flex direction={"column"} p={"2"} gap={"4"}>
+      <Flex direction={"column"} p={"2"} gap={"4"} className="result-wrapper">
         <PreviewImage />
         <CodeEditor />
       </Flex>
