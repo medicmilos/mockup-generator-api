@@ -13,7 +13,7 @@ export const appApi = createApi({
   baseQuery: baseQuery,
   endpoints: (builder) => ({
     getMockups: builder.query<DataModelArray<IMockup>, any>({
-      query: () => `/mockups`,
+      query: () => `/mockups/extended`,
     }),
     generateSingleRender: builder.mutation<
       DataModel<SingleRenderRes>,

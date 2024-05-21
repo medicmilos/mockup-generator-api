@@ -59,15 +59,6 @@ export const tempApi = createApi({
   reducerPath: "tempApi",
   baseQuery: baseQueryTemp,
   endpoints: (builder) => ({
-    getMyProjects: builder.query<DataModelArray<Project>, void>({
-      query: () => `mockup/catalogs/my_projects`,
-    }),
-    getMockupSmartObjects: builder.query<
-      DataModelArray<SmartObject>,
-      { mockup_id: number }
-    >({
-      query: ({ mockup_id }) => `mockups/${mockup_id}/smart-objects`,
-    }),
     updateDesignAsset: builder.mutation<
       DataModel<DesignAsset>,
       Partial<DesignAsset>

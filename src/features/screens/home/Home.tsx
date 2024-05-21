@@ -18,6 +18,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks";
 import {
   resetAppState,
   setAccessToken,
+  setActiveSmartObject,
   setApiKey,
   updateActiveSmartObject,
 } from "@/redux/slices/app";
@@ -124,28 +125,6 @@ export const Home = () => {
     refetchOnMountOrArgChange: true,
   });
 
-  const geyMyProjects = tempApi.useGetMyProjectsQuery(null!, {
-    refetchOnMountOrArgChange: true,
-  });
-
-  tempApi.useGetMockupSmartObjectsQuery(
-    {
-      mockup_id: parseInt(
-        geyMyProjects.data?.data
-          .find((project) => project.uuid === selectedMockup?.uuid)
-          ?.id.toString()!
-      ),
-    },
-    {
-      skip:
-        !selectedMockup ||
-        !geyMyProjects.data?.data
-          .find((project) => project.uuid === selectedMockup?.uuid)
-          ?.id.toString(),
-      refetchOnMountOrArgChange: true,
-    }
-  );
-
   const [generateSingleRender, { isLoading: isGenerating }] =
     appApi.useGenerateSingleRenderMutation();
   const [updateAsset, { isLoading: isUpdatingAsset }] =
@@ -218,6 +197,12 @@ export const Home = () => {
       initThumbRenderImage();
     }
   }, [fitMode, color, selectedMockup, activeSmartObject, design]);
+
+  useEffect(() => {
+    if (selectedMockup) {
+      dispatch(setActiveSmartObject(selectedMockup.smart_objects[0]));
+    }
+  }, [selectedMockup]);
 
   const setApiKeyAction = () => {
     dispatch(setApiKey(key));

@@ -131,6 +131,9 @@ export const appSlice = createSlice({
       state.design.url = payload;
       state.design.file = null!;
     },
+    setActiveSmartObject(state, { payload }) {
+      state.activeSmartObject = payload;
+    },
     resetAppState: (state) => {
       localStorage.removeItem("dynamicMockupsApiKey");
       localStorage.removeItem("dynamicMockupsAccessToken");
@@ -164,12 +167,6 @@ export const appSlice = createSlice({
         (state, response) => {
           state.singleRender.isLoading = true;
         }
-      )
-      .addMatcher(
-        tempApi.endpoints.getMockupSmartObjects.matchFulfilled,
-        (state, response) => {
-          state.activeSmartObject = response.payload.data[0];
-        }
       );
   },
 });
@@ -187,4 +184,5 @@ export const {
   updateActiveSmartObject,
   setDesignUrl,
   setDesignFile,
+  setActiveSmartObject,
 } = appSlice.actions;
