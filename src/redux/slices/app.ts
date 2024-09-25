@@ -2,13 +2,43 @@ import { appApi } from "@/services/app";
 import { ICollection, IMockup, SingleRenderRes } from "@/services/types";
 import { createSlice } from "@reduxjs/toolkit";
 import { fitModes } from "./types";
-import { SmartObject, tempApi } from "@/services/temp";
 import { IAssetFileConfig } from "@/features/screens/editor/Editor";
+
+interface Project {
+  id: number;
+  uuid: string;
+  user_id: number;
+  name: string;
+  project_id?: number;
+  psd_availability_id: number;
+  psd_category_id: number;
+  thumbnail: string;
+}
+
+type assetFit = "contain" | "cover" | "stretch";
+
+export interface SmartObject {
+  id: number;
+  uuid: string;
+  mockup_id: number;
+  smart_object_name: string;
+  smart_object_uuid: string;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  global_asset_top: number | null;
+  global_asset_left: number | null;
+  global_asset_width: number | null;
+  global_asset_height: number | null;
+  thumbnail: string;
+  print_area: 1 | 0;
+  fit: assetFit;
+}
 
 interface AppState {
   themeMode: "inherit" | "light" | "dark" | undefined;
   apiKey: string;
-  accessToken: string;
   selectedMockup: IMockup;
   color: string;
   fitMode: fitModes;
@@ -39,18 +69,13 @@ const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
 const dynamicMockupsApiKey = localStorage.getItem(
   "dynamicMockupsApiKey"
 ) as string;
-const dynamicMockupsAccessToken = localStorage.getItem(
-  "dynamicMockupsAccessToken"
-) as string;
 
 const initialState: AppState = {
   themeMode: (userPrefferedThemeMode ||
     systemTheme ||
     "light") as AppState["themeMode"],
   apiKey:
-    "aff193c4-4316-43a2-9788-9b3e1a0bb49a:7a26a83b6414720c408bfa65029ef2ab2d7a88695f379ca0ff7dcdc64ba41392" ||
-    "",
-  accessToken: dynamicMockupsAccessToken || "",
+    "aff193c4-4316-43a2-9788-9b3e1a0bb49a:7a26a83b6414720c408bfa65029ef2ab2d7a88695f379ca0ff7dcdc64ba41392",
 
   color: "#5753c6",
   fitMode: "contain",
@@ -104,10 +129,6 @@ export const appSlice = createSlice({
       state.apiKey = payload;
       localStorage.setItem("dynamicMockupsApiKey", payload);
     },
-    setAccessToken(state, { payload }) {
-      state.accessToken = payload;
-      localStorage.setItem("dynamicMockupsAccessToken", payload);
-    },
     setSelectedMockup(state, { payload }) {
       state.selectedMockup = payload;
     },
@@ -147,7 +168,6 @@ export const appSlice = createSlice({
     },
     resetAppState: (state) => {
       localStorage.removeItem("dynamicMockupsApiKey");
-      localStorage.removeItem("dynamicMockupsAccessToken");
       return initialState;
     },
   },
@@ -204,7 +224,6 @@ export const {
   setSelectedMockup,
   setColor,
   setFitMode,
-  setAccessToken,
   updateActiveSmartObject,
   setDesignUrl,
   setDesignFile,

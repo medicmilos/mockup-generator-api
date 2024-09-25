@@ -17,14 +17,12 @@ import { appApi } from "@/services/app";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import {
   resetAppState,
-  setAccessToken,
   setActiveSmartObject,
   setApiKey,
   updateActiveSmartObject,
 } from "@/redux/slices/app";
 import { Mockups } from "./components/Mockups";
 import { Cross2Icon } from "@radix-ui/react-icons";
-import { tempApi } from "@/services/temp";
 import { AddDesign } from "./components/AddDessign";
 import { useNavigate, useParams } from "react-router-dom";
 import { ReactComponent as ArrowLeft } from "@/assets/icons/arrow-left.svg";
@@ -73,22 +71,16 @@ export const Editor = () => {
     fitMode,
     color,
     selectedMockup,
-    accessToken,
     activeSmartObject,
     design,
     activeDesignAsset,
   } = useAppSelector((state) => state.appReducer);
 
   const [key, setKey] = useState<string>(apiKey);
-  const [token, setToken] = useState<string>(accessToken);
 
   useEffect(() => {
     setKey(apiKey);
   }, [apiKey]);
-
-  useEffect(() => {
-    setToken(token);
-  }, [accessToken]);
 
   const [assetFileConfig, setAssetFileConfig] = useState<IAssetFileConfig>({
     id: 2360,
@@ -131,8 +123,6 @@ export const Editor = () => {
 
   const [generateSingleRender, { isLoading: isGenerating }] =
     appApi.useGenerateSingleRenderMutation();
-  const [updateAsset, { isLoading: isUpdatingAsset }] =
-    tempApi.useUpdateDesignAssetMutation();
 
   const getRenderData = () => {
     const formData = new FormData();
@@ -175,20 +165,6 @@ export const Editor = () => {
       })
     );
 
-    await updateAsset({
-      id: activeDesignAsset?.id,
-      smart_object_id: activeSmartObject?.id,
-      design_area_height: data.design_area_height,
-      design_area_width: data.design_area_width,
-      design_area_top: data.design_area_top,
-      design_area_left: data.design_area_left,
-      height: data.height,
-      width: data.width,
-      top: data.transformY,
-      left: data.transformX,
-      rotate: data.rotate,
-    });
-
     await generateSingleRender(getRenderData());
   };
 
@@ -210,10 +186,6 @@ export const Editor = () => {
 
   const setApiKeyAction = () => {
     dispatch(setApiKey(key));
-  };
-
-  const setAccessTokenAction = () => {
-    dispatch(setAccessToken(token));
   };
 
   const clearApiKeyAction = () => {
