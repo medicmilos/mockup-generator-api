@@ -1,19 +1,15 @@
 import { appApi } from "@/services/app";
-import { IMockup, SingleRenderRes } from "@/services/types";
+import { ICollection, IMockup, SingleRenderRes } from "@/services/types";
 import { createSlice } from "@reduxjs/toolkit";
 import { fitModes } from "./types";
 import { SmartObject, tempApi } from "@/services/temp";
-import { IAssetFileConfig } from "@/features/screens/home/Home";
+import { IAssetFileConfig } from "@/features/screens/editor/Editor";
 
 interface AppState {
   themeMode: "inherit" | "light" | "dark" | undefined;
   apiKey: string;
   accessToken: string;
   selectedMockup: IMockup;
-  mockups: {
-    data: IMockup[];
-    isLoading: boolean;
-  };
   color: string;
   fitMode: fitModes;
   singleRender: { data: SingleRenderRes; isLoading: boolean };
@@ -23,6 +19,12 @@ interface AppState {
     url?: string;
   };
   activeDesignAsset: IAssetFileConfig;
+
+  collections: ICollection[];
+  mockups: {
+    data: IMockup[];
+    isLoading: boolean;
+  };
 }
 
 const userPrefferedThemeMode = window.localStorage.getItem("app-theme");
@@ -41,12 +43,11 @@ const initialState: AppState = {
   themeMode: (userPrefferedThemeMode ||
     systemTheme ||
     "light") as AppState["themeMode"],
-  apiKey: dynamicMockupsApiKey || "",
+  apiKey:
+    "32c220b4-fe65-48ae-8f5a-424693e50ca7:a3781e846a816ffd9496e2ea0f921111ab8e562cbba2cba6c530bc5977c47357" ||
+    "",
   accessToken: dynamicMockupsAccessToken || "",
-  mockups: {
-    data: [],
-    isLoading: false,
-  },
+
   color: "#5753c6",
   fitMode: "contain",
   selectedMockup: null!,
@@ -80,6 +81,8 @@ const initialState: AppState = {
     left: 174,
     top: 399,
   },
+  collections: [],
+  mockups: { data: [], isLoading: true },
 };
 
 export const appSlice = createSlice({
@@ -143,19 +146,6 @@ export const appSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addMatcher(
-        appApi.endpoints.getMockups.matchFulfilled,
-        (state, response) => {
-          state.mockups.data = response.payload.data;
-          state.mockups.isLoading = false;
-        }
-      )
-      .addMatcher(
-        appApi.endpoints.getMockups.matchPending,
-        (state, response) => {
-          state.mockups.isLoading = true;
-        }
-      )
-      .addMatcher(
         appApi.endpoints.generateSingleRender.matchFulfilled,
         (state, response) => {
           state.singleRender.data = response.payload.data;
@@ -166,6 +156,25 @@ export const appSlice = createSlice({
         appApi.endpoints.generateSingleRender.matchPending,
         (state, response) => {
           state.singleRender.isLoading = true;
+        }
+      )
+      .addMatcher(
+        appApi.endpoints.getCollections.matchFulfilled,
+        (state, response) => {
+          state.collections = response.payload.data;
+        }
+      )
+      .addMatcher(
+        appApi.endpoints.getMockups.matchFulfilled,
+        (state, response) => {
+          state.mockups.data = response.payload.data;
+          state.mockups.isLoading = false;
+        }
+      )
+      .addMatcher(
+        appApi.endpoints.getMockups.matchPending,
+        (state, response) => {
+          state.mockups.isLoading = true;
         }
       );
   },

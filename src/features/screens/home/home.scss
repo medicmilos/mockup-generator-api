@@ -1,0 +1,19 @@
+.home-page-wrapper {
+  .view-wrapper {
+    width: 100%;
+    grid-template-columns: repeat(auto-fill, minmax(258px, 1fr));
+
+    @media screen and (max-width: 1919px) {
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    }
+    @media screen and (max-width: 1608px) {
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+    @media screen and (max-width: 1400px) {
+      grid-template-columns: repeat(auto-fill, minmax(205px, 1fr));
+    }
+    @media screen and (max-width: 1187px) {
+      grid-template-columns: repeat(auto-fill, minmax(172px, 1fr));
+    }
+  }
+}

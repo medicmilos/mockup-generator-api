@@ -19,13 +19,6 @@ export interface SmartObject {
   uuid: string;
 }
 
-export interface IMockup {
-  name: string;
-  smart_objects: SmartObject[];
-  uuid: string;
-  thumbnail?: string;
-}
-
 export interface SingleRenderRes {
   export_label: string;
   export_path: string;
@@ -45,3 +38,20 @@ export interface SingleRenderReq {
   }[];
 }
 
+export interface ICollection {
+  uuid: string;
+  name: string;
+  mockup_count: number;
+  created_at: string;
+  created_at_timestamp: number;
+  updated_at: string;
+  updated_at_timestamp: number;
+}
+
+export interface IMockup {
+  collections: { uuid: string; name: string }[];
+  name: string;
+  smart_objects: { uuid: string; name: string }[];
+  thumbnail: string;
+  uuid: string;
+}

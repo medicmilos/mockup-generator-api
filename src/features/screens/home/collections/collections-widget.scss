@@ -1,0 +1,58 @@
+.collections-widget-wrapper {
+  width: 258px;
+  min-width: 258px;
+  border-radius: 8px;
+  background: var(--slate-3);
+  position: sticky;
+  top: 0;
+  left: 0;
+
+  .head {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--slate-11);
+    padding: 8.5px 0;
+    svg {
+      width: 10px;
+      height: 10px;
+      color: var(--slate-12);
+      stroke: var(--slate-12);
+    }
+  }
+  .collections {
+    .collection-items {
+      gap: 2px;
+    }
+    .collection {
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: 6px;
+      padding-left: 22px;
+      padding-right: 19px;
+
+      &.default {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .name {
+        display: inline-block;
+        white-space: nowrap;
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+        max-width: 125px;
+      }
+      .collection-count {
+        display: block;
+      }
+
+      &.active {
+        background-color: var(--slate-5);
+      }
+      &:hover {
+        background-color: var(--slate-4);
+        cursor: pointer;
+      }
+    }
+  }
+}

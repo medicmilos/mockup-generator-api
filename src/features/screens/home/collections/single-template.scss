@@ -1,0 +1,113 @@
+.single-template {
+  // min-width: 262px;
+  // height: 262px;
+  aspect-ratio: 1 / 1.3;
+  border-radius: var(--space-2);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  color: var(--slate-1);
+  position: relative;
+  width: 100%;
+
+  @keyframes zoom-in-zoom-out {
+    0% {
+      transform: scale(1, 1);
+    }
+    50% {
+      transform: scale(1.5, 1.5);
+    }
+    100% {
+      transform: scale(1, 1);
+    }
+  }
+
+  .lazy-load-image-background {
+    border-radius: var(--space-2);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
+  .head-wrapper {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    width: 100%;
+    z-index: 10;
+    top: 0;
+    position: absolute;
+    color: white;
+
+    // background: linear-gradient(
+    //   180deg,
+    //   rgba(23, 23, 23, 0.5) 0%,
+    //   rgba(23, 23, 23, 0) 100%
+    // );
+    height: 97px;
+    transition: all 0.2s ease-in-out;
+    visibility: visible;
+    opacity: 1;
+    display: flex;
+    align-items: start;
+    justify-content: start;
+    span {
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden !important;
+      text-overflow: ellipsis;
+    }
+    .badge {
+      color: var(--slate-1);
+      background: var(--slate-a11);
+    }
+  }
+
+  .text-wrapper {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    width: 100%;
+    background: linear-gradient(
+      360deg,
+      rgba(23, 23, 23, 0.5) 0%,
+      rgba(23, 23, 23, 0) 100%
+    );
+    height: 173px;
+    transition: all 0.2s ease-in-out;
+    visibility: hidden;
+    opacity: 0;
+    z-index: 10;
+    position: relative;
+    button {
+      cursor: pointer;
+    }
+    span {
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden !important;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+  }
+  img {
+    transition: transform 0.5s;
+  }
+
+  &:hover {
+    .text-wrapper {
+      visibility: visible;
+      opacity: 1;
+      z-index: 10;
+    }
+    .head-wrapper {
+      visibility: visible;
+      opacity: 1;
+      z-index: 10;
+      top: 0;
+      position: absolute;
+    }
+    cursor: pointer;
+
+    img {
+      transform: scale(1.05);
+    }
+  }
+}

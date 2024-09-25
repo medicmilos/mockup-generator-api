@@ -6,14 +6,21 @@ import {
   IMockup,
   SingleRenderRes,
   SingleRenderReq,
+  ICollection,
 } from "./types";
 
 export const appApi = createApi({
   reducerPath: "appApi",
   baseQuery: baseQuery,
   endpoints: (builder) => ({
-    getMockups: builder.query<DataModelArray<IMockup>, any>({
-      query: () => `/mockups/extended`,
+    getMockups: builder.query<DataModelArray<IMockup>, { uuid: string }>({
+      query: ({ uuid }) => ({
+        url: `/mockups?collection_uuid=${uuid}`,
+        method: "GET",
+      }),
+    }),
+    getCollections: builder.query<DataModelArray<ICollection>, any>({
+      query: () => `/collections`,
     }),
     generateSingleRender: builder.mutation<
       DataModel<SingleRenderRes>,

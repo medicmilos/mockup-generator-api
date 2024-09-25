@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import Moveable from "react-moveable";
 import "./moveable.scss";
 import { Box, Flex } from "@radix-ui/themes";
-import { IActiveSmartObject, IAssetFileConfig } from "../Home";
-import { SmartObject } from "@/services/temp";
 import { useAppSelector } from "@/hooks";
+import { IAssetFileConfig } from "../Editor";
 
 interface IEditorV2Props {
   assetFileConfig: IAssetFileConfig;
