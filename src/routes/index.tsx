@@ -6,6 +6,8 @@ export enum routes {
   APP = "/",
 }
 
+// old poc
+
 export const AppRoutes = createBrowserRouter([
   {
     path: routes.APP,
