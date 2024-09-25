@@ -4,7 +4,7 @@ import {
   Flex,
   Grid,
   Tabs,
-  TextField,
+  Text,
   IconButton,
 } from "@radix-ui/themes";
 import { useEffect, useState } from "react";
@@ -26,6 +26,8 @@ import { Mockups } from "./components/Mockups";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { tempApi } from "@/services/temp";
 import { AddDesign } from "./components/AddDessign";
+import { useNavigate, useParams } from "react-router-dom";
+import { ReactComponent as ArrowLeft } from "@/assets/icons/arrow-left.svg";
 
 export interface IAssetFileConfig {
   id: number;
@@ -64,6 +66,8 @@ export interface SingleMockup {
 
 export const Editor = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { mockupUuid } = useParams();
   const {
     apiKey,
     fitMode,
@@ -217,26 +221,24 @@ export const Editor = () => {
   };
 
   return (
-    <Grid className={"app"} p={"4"} height={"100%"}>
-      <Flex direction={"column"} gap={"4"} p={"2"}>
-        <Tabs.Root defaultValue="public">
-          <Tabs.List>
-            <Tabs.Trigger value="public">Public Mockups</Tabs.Trigger>
-            <Tabs.Trigger value="custom">Custom Mockups</Tabs.Trigger>
-          </Tabs.List>
+    <Grid className={"app"} height={"100%"}>
+      <Flex direction={"column"} p={"4"} gap={"4"} className="editor">
+        <Flex gap={"5"} px={"2"} align={"center"}>
+          <Button
+            variant="ghost"
+            color="gray"
+            className="back-button"
+            size={"1"}
+            style={{ cursor: "pointer" }}
+            onClick={() => navigate(`/`)}
+          >
+            <ArrowLeft width="14px" height="14px" className="icon" />
+          </Button>
 
-          <Box pt="3">
-            <Tabs.Content value="public">
-              <Mockups />
-            </Tabs.Content>
-
-            <Tabs.Content value="custom">
-              <Mockups />
-            </Tabs.Content>
-          </Box>
-        </Tabs.Root>
-      </Flex>
-      <Flex direction={"column"} p={"2"} gap={"4"} className="editor">
+          <Text weight={"medium"} size={"2"}>
+            {selectedMockup?.name}
+          </Text>
+        </Flex>
         <AddDesign />
         <EditorV2
           assetFileConfig={assetFileConfig}

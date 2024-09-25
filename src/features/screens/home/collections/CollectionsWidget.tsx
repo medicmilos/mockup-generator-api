@@ -1,18 +1,19 @@
 import { appApi } from "@/services/app";
-import { Flex, Text } from "@radix-ui/themes";
+import { Flex, Skeleton, Text, Tooltip } from "@radix-ui/themes";
 import { ReactComponent as FolderIcon } from "@/assets/icons/folder-linear.svg";
 import { ReactComponent as WidgetIcon } from "@/assets/icons/widget.svg";
 import { useState } from "react";
-import { useAppSelector } from "@/hooks";
+import { useAppDispatch, useAppSelector } from "@/hooks";
 import "./collections-widget.scss";
+import { setSelectedCollection } from "@/redux/slices/app";
 
 interface ICollectionsWidget {}
 
 export const CollectionsWidget = ({}: ICollectionsWidget) => {
-  const { collections } = useAppSelector((state) => state.appReducer);
-  const [activeMockupCollectionUuid, setActiveMockupCollectionUuid] = useState<
-    string | null
-  >(null);
+  const dispatch = useAppDispatch();
+  const { collections, selectedCollection } = useAppSelector(
+    (state) => state.appReducer
+  );
 
   appApi.useGetCollectionsQuery(null, {
     refetchOnMountOrArgChange: true,
@@ -39,10 +40,10 @@ export const CollectionsWidget = ({}: ICollectionsWidget) => {
       <Flex className="collections" direction={"column"} gap={"2"}>
         <Flex
           className={`collection default ${
-            activeMockupCollectionUuid === null ? "active" : ""
+            selectedCollection === null ? "active" : ""
           }`}
           onClick={() => {
-            setActiveMockupCollectionUuid(null);
+            dispatch(setSelectedCollection(null));
           }}
           align={"center"}
           justify={"between"}
@@ -58,39 +59,49 @@ export const CollectionsWidget = ({}: ICollectionsWidget) => {
           {/* <Text weight={"light"}>{geyAllMyProjects.data?.data.length}</Text> */}
         </Flex>
         <Flex direction={"column"} className="collection-items">
-          {collections?.map((collection) => (
-            <Flex
-              key={`collection-item-${collection.uuid}`}
-              className={`collection ${
-                activeMockupCollectionUuid === collection.uuid ? "active" : ""
-              }`}
-              align={"center"}
-              gap={"2"}
-              px={"3"}
-              py={"2"}
-              width={"100%"}
-              justify={"between"}
-            >
+          {collections.isLoading ? (
+            <>
+              <Skeleton height={"36px"} />
+              <Skeleton height={"36px"} />
+              <Skeleton height={"36px"} />
+            </>
+          ) : (
+            collections?.data?.map((collection) => (
               <Flex
+                key={`collection-item-${collection.uuid}`}
+                className={`collection ${
+                  selectedCollection === collection.uuid ? "active" : ""
+                }`}
                 align={"center"}
                 gap={"2"}
+                px={"3"}
+                py={"2"}
                 width={"100%"}
-                onClick={() => {
-                  setActiveMockupCollectionUuid(collection.uuid);
-                }}
+                justify={"between"}
               >
-                <FolderIcon className="icon" />
-                <Text className="name" title={collection.name}>
-                  {collection.name}
-                </Text>
+                <Flex
+                  align={"center"}
+                  gap={"2"}
+                  width={"100%"}
+                  onClick={() => {
+                    dispatch(setSelectedCollection(collection.uuid));
+                  }}
+                >
+                  <FolderIcon className="icon" />
+                  <Tooltip content={collection.name}>
+                    <Text className="name" title={collection.name}>
+                      {collection.name}
+                    </Text>
+                  </Tooltip>
+                </Flex>
+                <>
+                  <Text weight={"light"} className="collection-count">
+                    {collection.mockup_count}
+                  </Text>
+                </>
               </Flex>
-              <>
-                <Text weight={"light"} className="collection-count">
-                  {collection.mockup_count}
-                </Text>
-              </>
-            </Flex>
-          ))}
+            ))
+          )}
         </Flex>
       </Flex>
     </Flex>

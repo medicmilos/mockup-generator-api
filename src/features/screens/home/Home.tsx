@@ -14,14 +14,16 @@ import { SingleTemplate } from "./collections/SingleTemplate";
 import "./home.scss";
 
 export const Home = () => {
-  const { collections, mockups } = useAppSelector((state) => state.appReducer);
+  const { collections, mockups, selectedCollection } = useAppSelector(
+    (state) => state.appReducer
+  );
 
   appApi.useGetMockupsQuery(
     {
-      uuid: collections[0]?.uuid,
+      uuid: selectedCollection,
     },
     {
-      skip: collections.length === 0,
+      skip: collections.isLoading,
       refetchOnMountOrArgChange: true,
     }
   );
@@ -43,11 +45,11 @@ export const Home = () => {
               !mockups.isLoading && mockups.data.length === 0 ? "flex" : "grid",
             height:
               !mockups.isLoading && mockups.data.length === 0
-                ? "calc(100vh - 69px)"
+                ? "100vh"
                 : "100%",
           }}
         >
-          {mockups.isLoading || mockups.isLoading
+          {mockups.isLoading
             ? [...Array(12)].map((item, index) => (
                 <Skeleton key={`${index}-item`} className="single-template" />
               ))

@@ -29,9 +29,7 @@ export const EditorV2 = ({
   apiCallUpdateAsset,
 }: IEditorV2Props) => {
   const targetRef = useRef<HTMLDivElement>(null);
-  const { activeSmartObject, design } = useAppSelector(
-    (state) => state.appReducer
-  );
+  const { design } = useAppSelector((state) => state.appReducer);
 
   const [moveableKey, setMoveableKey] = useState<number>(0);
   const [maxCanvasSize, setmaxCanvasSize] = useState<number>(400);
@@ -42,14 +40,10 @@ export const EditorV2 = ({
   useEffect(() => {
     if (assetFileConfig) {
       setAssetFile({
-        design_area_width:
-          activeSmartObject?.global_asset_width || assetFileConfig.width,
-        design_area_height:
-          activeSmartObject?.global_asset_height || assetFileConfig.height,
-        design_area_left:
-          activeSmartObject?.global_asset_left || assetFileConfig.transformX,
-        design_area_top:
-          activeSmartObject?.global_asset_top || assetFileConfig.transformY,
+        design_area_width: assetFileConfig.width,
+        design_area_height: assetFileConfig.height,
+        design_area_left: assetFileConfig.transformX,
+        design_area_top: assetFileConfig.transformY,
         canvasWidth: assetFileConfig.smartObjectWidth,
         canvasHeight: assetFileConfig.smartObjectHeight,
         imageWidth: assetFileConfig.width,
@@ -61,7 +55,7 @@ export const EditorV2 = ({
     }
   }, [assetFileConfig]);
 
-  useEffect(() => {
+  useEffect(() => {console.log(assetFile)
     if (assetFile) {
       setMoveableKey((prev) => {
         return prev + 1;
@@ -71,7 +65,7 @@ export const EditorV2 = ({
         scaleAssetFile();
       }
     }
-  }, [assetFile, activeSmartObject]);
+  }, [assetFile]);
 
   const scaleAssetFile = () => {
     // Calculate the scale factor for the canvas
@@ -81,12 +75,8 @@ export const EditorV2 = ({
     );
 
     // Calculate the scaled dimensions of the design area
-    const scaleddesign_area_width =
-      (activeSmartObject.global_asset_width || assetFile.imageWidth) *
-      canvasScale;
-    const scaleddesign_area_height =
-      (activeSmartObject.global_asset_height || assetFile.imageHeight) *
-      canvasScale;
+    const scaleddesign_area_width = assetFile.imageWidth * canvasScale;
+    const scaleddesign_area_height = assetFile.imageHeight * canvasScale;
 
     // Calculate the scaled dimensions of the canvas
     const scaledCanvasWidth = assetFile.canvasWidth * canvasScale;
@@ -101,10 +91,8 @@ export const EditorV2 = ({
     const scaledImageY = assetFile.imageY * canvasScale;
 
     // Calculate the scaled position of the design area
-    const scaleddesign_area_left =
-      (activeSmartObject.global_asset_left || assetFile.imageX) * canvasScale;
-    const scaleddesign_area_top =
-      (activeSmartObject.global_asset_top || assetFile.imageY) * canvasScale;
+    const scaleddesign_area_left = assetFile.imageX * canvasScale;
+    const scaleddesign_area_top = assetFile.imageY * canvasScale;
 
     // Set the scaled values
 
@@ -127,15 +115,13 @@ export const EditorV2 = ({
     apiCallUpdateAsset(data);
   };
 
+  console.log(scaledAssetFile);
+
   return (
     <Flex
       direction={"column"}
       gap={"4"}
-      className={`asset-editor-wrapper ${
-        activeSmartObject?.print_area
-          ? "print-area-enabled"
-          : "print-area-disabled"
-      }`}
+      className={`asset-editor-wrapper ${"print-area-disabled"}`}
     >
       <Flex
         className="canvas-wrapper"
@@ -152,56 +138,27 @@ export const EditorV2 = ({
               height: `${scaledAssetFile.canvasHeight}px`,
             }}
           >
-            {!activeSmartObject?.print_area ? (
-              <Box
-                className="editor-target"
-                ref={targetRef}
-                style={{
-                  backgroundImage: `url(${
-                    design.url || URL.createObjectURL(design.file as File)
-                  })`,
-                  width: scaledAssetFile.imageWidth,
-                  height: scaledAssetFile.imageHeight,
-                  top: scaledAssetFile.imageY,
-                  left: scaledAssetFile.imageX,
-                }}
-              ></Box>
-            ) : (
-              <Box
-                className="editor-target"
-                ref={targetRef}
-                style={{
-                  width: scaledAssetFile.design_area_width,
-                  height: scaledAssetFile.design_area_height,
-                  top: scaledAssetFile.design_area_top,
-                  left: scaledAssetFile.design_area_left,
-                  transform: `translate(0px, 0px) rotate(${
-                    assetFileConfig?.rotate || 0
-                  }deg)`,
-                }}
-              >
-                <img
-                  src={design.url || URL.createObjectURL(design.file as File)}
-                  className={`target-design-asset ${
-                    activeSmartObject?.fit === "contain" &&
-                    "target-design-asset-contain"
-                  } ${
-                    activeSmartObject?.fit === "stretch" &&
-                    "target-design-asset-stretch"
-                  } ${
-                    activeSmartObject?.fit === "cover" &&
-                    "target-design-asset-cover"
-                  }`}
-                />
-              </Box>
-            )}
+            <Box
+              className="editor-target"
+              ref={targetRef}
+              style={{
+                backgroundImage: `url(${
+                  design.url || URL.createObjectURL(design.file as File)
+                })`,
+                width: scaledAssetFile.imageWidth,
+                height: scaledAssetFile.imageHeight,
+                top: scaledAssetFile.imageY,
+                left: scaledAssetFile.imageX,
+              }}
+            ></Box>
+
             <Moveable
               className="editor-moveable"
               target={targetRef}
               draggable={true}
               resizable={true}
               origin={false}
-              keepRatio={activeSmartObject?.print_area ? false : true}
+              keepRatio={true}
               useAccuratePosition={true}
               throttleDrag={1}
               throttleResize={1}
@@ -221,123 +178,63 @@ export const EditorV2 = ({
               onResizeEnd={(e) => {
                 if (!e.lastEvent) return;
 
-                if (activeSmartObject?.print_area) {
-                  // drag
-                  const localTransformX =
-                    scaledAssetFile.design_area_left +
-                    e.lastEvent.drag.translate[0];
-                  const localTransformY =
-                    scaledAssetFile.design_area_top +
-                    e.lastEvent.drag.translate[1];
+                // drag
+                const localTransformX =
+                  scaledAssetFile.imageX + e.lastEvent.drag.translate[0];
+                const localTransformY =
+                  scaledAssetFile.imageY + e.lastEvent.drag.translate[1];
 
-                  const transformX =
-                    (localTransformX * assetFile.canvasWidth) /
-                    scaledAssetFile.canvasWidth;
+                const transformX =
+                  (localTransformX * assetFile.canvasWidth) /
+                  scaledAssetFile.canvasWidth;
 
-                  const transformY =
-                    (localTransformY * assetFile.canvasHeight) /
-                    scaledAssetFile.canvasHeight;
+                const transformY =
+                  (localTransformY * assetFile.canvasHeight) /
+                  scaledAssetFile.canvasHeight;
 
-                  // resize designArea
+                // resize
 
-                  const newWidth = e.lastEvent.width;
-                  const newHeight = e.lastEvent.height;
+                const newWidth = e.lastEvent.width;
+                const newHeight = e.lastEvent.height;
 
-                  const width =
-                    (newWidth * assetFile.imageWidth) /
-                    scaledAssetFile.imageWidth;
-                  const height =
-                    (newHeight * assetFile.imageHeight) /
-                    scaledAssetFile.imageHeight;
+                const width =
+                  (newWidth * assetFile.imageWidth) /
+                  scaledAssetFile.imageWidth;
+                const height =
+                  (newHeight * assetFile.imageHeight) /
+                  scaledAssetFile.imageHeight;
 
-                  updateAsset({
-                    design_area_width: Math.round(width),
-                    design_area_height: Math.round(height),
-                    design_area_left: Math.round(transformX),
-                    design_area_top: Math.round(transformY),
-                    rotate: assetFileConfig.rotate,
-                  });
-                } else {
-                  // drag
-                  const localTransformX =
-                    scaledAssetFile.imageX + e.lastEvent.drag.translate[0];
-                  const localTransformY =
-                    scaledAssetFile.imageY + e.lastEvent.drag.translate[1];
-
-                  const transformX =
-                    (localTransformX * assetFile.canvasWidth) /
-                    scaledAssetFile.canvasWidth;
-
-                  const transformY =
-                    (localTransformY * assetFile.canvasHeight) /
-                    scaledAssetFile.canvasHeight;
-
-                  // resize
-
-                  const newWidth = e.lastEvent.width;
-                  const newHeight = e.lastEvent.height;
-
-                  const width =
-                    (newWidth * assetFile.imageWidth) /
-                    scaledAssetFile.imageWidth;
-                  const height =
-                    (newHeight * assetFile.imageHeight) /
-                    scaledAssetFile.imageHeight;
-
-                  updateAsset({
-                    width: Math.round(width),
-                    height: Math.round(height),
-                    transformX: Math.round(transformX),
-                    transformY: Math.round(transformY),
-                    rotate: assetFileConfig.rotate,
-                  });
-                }
+                updateAsset({
+                  width: Math.round(width),
+                  height: Math.round(height),
+                  transformX: Math.round(transformX),
+                  transformY: Math.round(transformY),
+                  rotate: assetFileConfig.rotate,
+                });
               }}
               onDragEnd={(e) => {
                 if (!e.lastEvent) return;
-                if (activeSmartObject?.print_area) {
-                  const localTransformX =
-                    scaledAssetFile.design_area_left + e.lastEvent.translate[0];
-                  const localTransformY =
-                    scaledAssetFile.design_area_top + e.lastEvent.translate[1];
 
-                  const design_area_left =
-                    (localTransformX * assetFile.canvasWidth) /
-                    scaledAssetFile.canvasWidth;
+                const localTransformX =
+                  scaledAssetFile.imageX + e.lastEvent.translate[0];
+                const localTransformY =
+                  scaledAssetFile.imageY + e.lastEvent.translate[1];
 
-                  const design_area_top =
-                    (localTransformY * assetFile.canvasHeight) /
-                    scaledAssetFile.canvasHeight;
+                const transformX =
+                  (localTransformX * assetFile.canvasWidth) /
+                  scaledAssetFile.canvasWidth;
 
-                  updateAsset({
-                    design_area_width: assetFileConfig.design_area_width,
-                    design_area_height: assetFileConfig.design_area_height,
-                    design_area_left: Math.round(design_area_left),
-                    design_area_top: Math.round(design_area_top),
-                    rotate: assetFileConfig.rotate,
-                  });
-                } else {
-                  const localTransformX =
-                    scaledAssetFile.imageX + e.lastEvent.translate[0];
-                  const localTransformY =
-                    scaledAssetFile.imageY + e.lastEvent.translate[1];
+                const transformY =
+                  (localTransformY * assetFile.canvasHeight) /
+                  scaledAssetFile.canvasHeight;
 
-                  const transformX =
-                    (localTransformX * assetFile.canvasWidth) /
-                    scaledAssetFile.canvasWidth;
-
-                  const transformY =
-                    (localTransformY * assetFile.canvasHeight) /
-                    scaledAssetFile.canvasHeight;
-
-                  updateAsset({
-                    width: assetFileConfig.width,
-                    height: assetFileConfig.height,
-                    transformX: Math.round(transformX),
-                    transformY: Math.round(transformY),
-                    rotate: assetFileConfig.rotate,
-                  });
-                }
+                updateAsset({
+                  width: assetFileConfig.width,
+                  height: assetFileConfig.height,
+                  transformX: Math.round(transformX),
+                  transformY: Math.round(transformY),
+                  rotate: assetFileConfig.rotate,
+                });
               }}
               snappable={true}
               snapDirections={{
@@ -359,23 +256,13 @@ export const EditorV2 = ({
               onRotateEnd={(e) => {
                 if (!e.lastEvent) return;
 
-                if (activeSmartObject?.print_area) {
-                  updateAsset({
-                    design_area_width: assetFileConfig.design_area_width,
-                    design_area_height: assetFileConfig.design_area_height,
-                    design_area_left: assetFileConfig.design_area_left,
-                    design_area_top: assetFileConfig.design_area_top,
-                    rotate: Math.round(e.lastEvent.rotate),
-                  });
-                } else {
-                  updateAsset({
-                    width: assetFileConfig.width,
-                    height: assetFileConfig.height,
-                    transformX: assetFileConfig.transformX,
-                    transformY: assetFileConfig.transformY,
-                    rotate: Math.round(e.lastEvent.rotate),
-                  });
-                }
+                updateAsset({
+                  design_area_width: assetFileConfig.design_area_width,
+                  design_area_height: assetFileConfig.design_area_height,
+                  design_area_left: assetFileConfig.design_area_left,
+                  design_area_top: assetFileConfig.design_area_top,
+                  rotate: Math.round(e.lastEvent.rotate),
+                });
               }}
             />
           </Box>

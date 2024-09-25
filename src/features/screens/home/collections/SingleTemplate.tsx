@@ -3,12 +3,15 @@ import { Flex, Text, Tooltip } from "@radix-ui/themes";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./single-template.scss";
+import { setSelectedMockup } from "@/redux/slices/app";
+import { useAppDispatch } from "@/hooks";
 
 interface ISingleTemplate {
   mockup: IMockup;
 }
 
 export const SingleTemplate = ({ mockup }: ISingleTemplate) => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -16,6 +19,7 @@ export const SingleTemplate = ({ mockup }: ISingleTemplate) => {
   //   psdEngineApi.useLoadPublicPsdMockupMutation();
 
   const loadPublicMockup = async () => {
+    dispatch(setSelectedMockup(mockup));
     navigate(`/mockup/${mockup.uuid}`, { state: { from: location.pathname } });
   };
 

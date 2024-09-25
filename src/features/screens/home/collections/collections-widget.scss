@@ -7,6 +7,10 @@
   top: 0;
   left: 0;
 
+  @media screen and (max-width: 480px) {
+    width: 100%;
+  }
+
   .head {
     font-size: 12px;
     font-weight: 700;

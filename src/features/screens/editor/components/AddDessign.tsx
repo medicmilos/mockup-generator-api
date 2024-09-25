@@ -31,7 +31,7 @@ export const AddDesign = () => {
       gap={"2"}
       className="add-design-wrapper"
     >
-      <Flex gap={"3"} width={"100%"}>
+      {/* <Flex gap={"3"} width={"100%"}>
         <TextField.Root
           placeholder="Design URL"
           type="url"
@@ -40,7 +40,7 @@ export const AddDesign = () => {
         />
         <Button onClick={() => setDesignUrlAction()}>Set Design URL</Button>
       </Flex>
-      <Text size={"2"}>or</Text>
+      <Text size={"2"}>or</Text> */}
       <Flex direction={"column"} width={"100%"}>
         <input
           ref={fileRef as any}

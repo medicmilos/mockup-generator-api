@@ -5,7 +5,7 @@ import { Editor } from "@/features/screens/editor/Editor";
 
 export enum routes {
   APP = "/",
-  EDITOR = "/editor",
+  EDITOR = "/mockup/:mockupUuid",
 }
 
 export const AppRoutes = createBrowserRouter([

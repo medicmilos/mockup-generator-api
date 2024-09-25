@@ -1,6 +1,6 @@
 .app {
   background: var(--slate-1);
-  grid-template-columns: 0.8fr 1.2fr 2fr;
+  grid-template-columns: 1fr 2fr;
 
   @media only screen and (max-width: 600px) {
     grid-template-columns: auto;
@@ -20,7 +20,6 @@
 }
 
 .result-wrapper {
-  max-width: 800px;
   .code-editor-wrapper {
     font-size: 12px;
     width: 100%;
@@ -38,11 +37,11 @@
 }
 
 .preview-image-wrapper {
-  height: 35vh;
+  height: 98vh;
   position: relative;
   .lazy-load-image-background {
     object-fit: contain;
-    height: 35vh;
+    height: 95vh;
   }
   img {
     object-fit: contain;

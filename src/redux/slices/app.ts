@@ -20,11 +20,15 @@ interface AppState {
   };
   activeDesignAsset: IAssetFileConfig;
 
-  collections: ICollection[];
+  collections: {
+    data: ICollection[];
+    isLoading: boolean;
+  };
   mockups: {
     data: IMockup[];
     isLoading: boolean;
   };
+  selectedCollection: string | null;
 }
 
 const userPrefferedThemeMode = window.localStorage.getItem("app-theme");
@@ -44,7 +48,7 @@ const initialState: AppState = {
     systemTheme ||
     "light") as AppState["themeMode"],
   apiKey:
-    "32c220b4-fe65-48ae-8f5a-424693e50ca7:a3781e846a816ffd9496e2ea0f921111ab8e562cbba2cba6c530bc5977c47357" ||
+    "aff193c4-4316-43a2-9788-9b3e1a0bb49a:7a26a83b6414720c408bfa65029ef2ab2d7a88695f379ca0ff7dcdc64ba41392" ||
     "",
   accessToken: dynamicMockupsAccessToken || "",
 
@@ -81,8 +85,9 @@ const initialState: AppState = {
     left: 174,
     top: 399,
   },
-  collections: [],
+  collections: { data: [], isLoading: true },
   mockups: { data: [], isLoading: true },
+  selectedCollection: null,
 };
 
 export const appSlice = createSlice({
@@ -137,6 +142,9 @@ export const appSlice = createSlice({
     setActiveSmartObject(state, { payload }) {
       state.activeSmartObject = payload;
     },
+    setSelectedCollection(state, { payload }) {
+      state.selectedCollection = payload;
+    },
     resetAppState: (state) => {
       localStorage.removeItem("dynamicMockupsApiKey");
       localStorage.removeItem("dynamicMockupsAccessToken");
@@ -161,7 +169,14 @@ export const appSlice = createSlice({
       .addMatcher(
         appApi.endpoints.getCollections.matchFulfilled,
         (state, response) => {
-          state.collections = response.payload.data;
+          state.collections.data = response.payload.data;
+          state.collections.isLoading = false;
+        }
+      )
+      .addMatcher(
+        appApi.endpoints.getCollections.matchPending,
+        (state, response) => {
+          state.collections.isLoading = true;
         }
       )
       .addMatcher(
@@ -194,4 +209,5 @@ export const {
   setDesignUrl,
   setDesignFile,
   setActiveSmartObject,
+  setSelectedCollection,
 } = appSlice.actions;
