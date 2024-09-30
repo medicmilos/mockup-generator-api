@@ -6,11 +6,16 @@ import { Editor } from "@/features/screens/editor/Editor";
 export enum routes {
   APP = "/",
   EDITOR = "/mockup/:mockupUuid",
+  COLLECTION = "/collection/:collectionUuid",
 }
 
 export const AppRoutes = createBrowserRouter([
   {
     path: routes.APP,
+    element: <Home />,
+  },
+  {
+    path: routes.COLLECTION,
     element: <Home />,
   },
   {

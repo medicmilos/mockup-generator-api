@@ -13,10 +13,10 @@ export const appApi = createApi({
   reducerPath: "appApi",
   baseQuery: baseQuery,
   endpoints: (builder) => ({
-    getMockups: builder.query<DataModelArray<IMockup>, { uuid: string | null }>(
+    getMockups: builder.query<DataModelArray<IMockup>, { uuid: string | undefined }>(
       {
         query: ({ uuid }) => ({
-          url: uuid ? `/mockups?collection_uuid=${uuid}` : `/mockups`,
+          url: uuid ? `/mockups/extended?collection_uuid=${uuid}` : `/mockups/extended`,
           method: "GET",
         }),
       }

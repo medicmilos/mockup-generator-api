@@ -1,30 +1,21 @@
-import { appApi } from "@/services/app";
+import { useNavigate, useParams } from "react-router-dom";
 import { Flex, Skeleton, Text, Tooltip } from "@radix-ui/themes";
+import { useAppSelector } from "@/hooks";
+import { appApi } from "@/services/app";
 import { ReactComponent as FolderIcon } from "@/assets/icons/folder-linear.svg";
 import { ReactComponent as WidgetIcon } from "@/assets/icons/widget.svg";
-import { useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/hooks";
 import "./collections-widget.scss";
-import { setSelectedCollection } from "@/redux/slices/app";
 
 interface ICollectionsWidget {}
 
 export const CollectionsWidget = ({}: ICollectionsWidget) => {
-  const dispatch = useAppDispatch();
-  const { collections, selectedCollection } = useAppSelector(
-    (state) => state.appReducer
-  );
+  const navigate = useNavigate();
+  const { collectionUuid } = useParams();
+  const { collections } = useAppSelector((state) => state.appReducer);
 
   appApi.useGetCollectionsQuery(null, {
     refetchOnMountOrArgChange: true,
   });
-
-  // const geyAllMyProjects = workspaceApi.useGetMyProjectsQuery(
-  //   { collectionId: 0 },
-  //   {
-  //     refetchOnMountOrArgChange: true,
-  //   }
-  // );
 
   return (
     <Flex
@@ -40,10 +31,10 @@ export const CollectionsWidget = ({}: ICollectionsWidget) => {
       <Flex className="collections" direction={"column"} gap={"2"}>
         <Flex
           className={`collection default ${
-            selectedCollection === null ? "active" : ""
+            typeof collectionUuid === "undefined" ? "active" : ""
           }`}
           onClick={() => {
-            dispatch(setSelectedCollection(null));
+            navigate(`/`);
           }}
           align={"center"}
           justify={"between"}
@@ -70,7 +61,7 @@ export const CollectionsWidget = ({}: ICollectionsWidget) => {
               <Flex
                 key={`collection-item-${collection.uuid}`}
                 className={`collection ${
-                  selectedCollection === collection.uuid ? "active" : ""
+                  collectionUuid === collection.uuid ? "active" : ""
                 }`}
                 align={"center"}
                 gap={"2"}
@@ -84,7 +75,7 @@ export const CollectionsWidget = ({}: ICollectionsWidget) => {
                   gap={"2"}
                   width={"100%"}
                   onClick={() => {
-                    dispatch(setSelectedCollection(collection.uuid));
+                    navigate(`/collection/${collection.uuid}`);
                   }}
                 >
                   <FolderIcon className="icon" />

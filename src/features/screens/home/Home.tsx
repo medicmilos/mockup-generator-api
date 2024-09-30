@@ -12,15 +12,15 @@ import { appApi } from "@/services/app";
 import { useAppSelector } from "@/hooks";
 import { SingleTemplate } from "./collections/SingleTemplate";
 import "./home.scss";
+import { useParams } from "react-router-dom";
 
 export const Home = () => {
-  const { collections, mockups, selectedCollection } = useAppSelector(
-    (state) => state.appReducer
-  );
+  const { collectionUuid } = useParams();
+  const { collections, mockups } = useAppSelector((state) => state.appReducer);
 
   appApi.useGetMockupsQuery(
     {
-      uuid: selectedCollection,
+      uuid: collectionUuid,
     },
     {
       skip: collections.isLoading,
