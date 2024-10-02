@@ -7,7 +7,7 @@ import { useAppSelector } from "@/hooks";
 export interface CodeEditor {}
 
 export const CodeEditor = ({}: CodeEditor) => {
-  const { apiKey, fitMode, color, selectedMockup, activeSmartObject, design } =
+  const { fitMode, color, selectedMockup, activeSmartObject, design } =
     useAppSelector((state) => state.appReducer);
 
   const [value, setValue] = useState("");
@@ -31,7 +31,7 @@ formData.append("smart_objects[0][color]", "${color}");
 const apiUrl = "https://design-copilot-laravel-develop.gitlab.designcopilot.io/api/v1/renders";
 // Create headers
 const headers = new Headers();
-headers.append("X-API-KEY", "${apiKey}");
+headers.append("X-API-KEY", "${''}");
 headers.append("Accept", "application/json");
 // Fetch options
 const options = {
@@ -50,7 +50,7 @@ fetch(apiUrl, options)
 
   const onChange = useCallback(
     (val: SetStateAction<string>, viewUpdate: any) => {
-       setValue(val);
+      setValue(val);
     },
     []
   );

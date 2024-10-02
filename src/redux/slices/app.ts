@@ -23,7 +23,6 @@ export interface SmartObject {
 
 interface AppState {
   themeMode: "inherit" | "light" | "dark" | undefined;
-  apiKey: string;
   color: string;
   fitMode: fitModes;
   singleRender: { data: SingleRenderRes; isLoading: boolean };
@@ -54,8 +53,6 @@ const initialState: AppState = {
   themeMode: (userPrefferedThemeMode ||
     systemTheme ||
     "light") as AppState["themeMode"],
-  apiKey:
-    "aff193c4-4316-43a2-9788-9b3e1a0bb49a:7a26a83b6414720c408bfa65029ef2ab2d7a88695f379ca0ff7dcdc64ba41392",
   color: "#5753c6",
   fitMode: "contain",
   singleRender: {
@@ -86,9 +83,6 @@ export const appSlice = createSlice({
       root.classList.remove("light", "dark", "light-theme", "dark-theme");
       root.classList.add(payload);
       state.themeMode = payload;
-    },
-    setApiKey(state, { payload }) {
-      state.apiKey = payload;
     },
     setSelectedMockup(state, { payload }) {
       state.selectedMockup = payload;
@@ -168,7 +162,6 @@ export default appSlice.reducer;
 
 export const {
   setThemeMode,
-  setApiKey,
   resetAppState,
   setSelectedMockup,
   setColor,

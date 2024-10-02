@@ -24,20 +24,6 @@ export interface SingleRenderRes {
   export_path: string;
 }
 
-export interface SingleRenderReq {
-  mockup_uuid: string;
-  export_label?: string;
-  smart_objects: {
-    uuid: string;
-    asset?: {
-      file?: File;
-      url?: string;
-      fit?: string;
-    };
-    color?: string;
-  }[];
-}
-
 export interface ICollection {
   uuid: string;
   name: string;

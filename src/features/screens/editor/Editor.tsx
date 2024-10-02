@@ -207,8 +207,6 @@ export const Editor = () => {
         ...data,
       };
     });
-
-    // await generateSingleRender(getRenderData(data));
   };
 
   const renderPreviewImage = async () => {

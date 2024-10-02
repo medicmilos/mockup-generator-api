@@ -1,4 +1,3 @@
-import { store } from "@/redux/store";
 import {
   BaseQueryFn,
   FetchArgs,
@@ -8,17 +7,15 @@ import {
 import { Mutex } from "async-mutex";
 
 const baseUrl = `${API_BASE_URL}`;
-
-// Create a new mutex
-const mutex = new Mutex();
-
+const apiKey =
+  "aff193c4-4316-43a2-9788-9b3e1a0bb49a:7a26a83b6414720c408bfa65029ef2ab2d7a88695f379ca0ff7dcdc64ba41392";
 let csrfToken: string | null = null;
+
+const mutex = new Mutex();
 
 const baseQuery = fetchBaseQuery({
   baseUrl,
   prepareHeaders: (headers) => {
-    let apiKey = store.getState().appReducer.apiKey || null;
-
     if (apiKey) {
       headers.set("X-API-KEY", `${apiKey}`);
       headers.set("Accept", "application/json");
@@ -36,7 +33,7 @@ const fetchCSRFToken = async () => {
     // const response = await fetch(`${baseUrl}csrf-token-endpoint`, {
     method: "GET",
     headers: {
-      "X-API-KEY": store.getState().appReducer.apiKey || "",
+      "X-API-KEY": apiKey,
       Accept: "application/json",
     },
   });

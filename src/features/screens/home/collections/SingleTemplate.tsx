@@ -15,9 +15,6 @@ export const SingleTemplate = ({ mockup }: ISingleTemplate) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // const [loadMockup, { isLoading }] =
-  //   psdEngineApi.useLoadPublicPsdMockupMutation();
-
   const loadPublicMockup = async () => {
     dispatch(setSelectedMockup(mockup));
     navigate(`/mockup/${mockup.uuid}`, { state: { from: location.pathname } });
