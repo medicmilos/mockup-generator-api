@@ -15,8 +15,8 @@ export const appApi = createApi({
   endpoints: (builder) => ({
     getMockups: builder.query<DataModelArray<IMockup>, { uuid: string | undefined }>(
       {
-        query: ({ uuid }) => ({
-          url: uuid ? `/mockups/extended?collection_uuid=${uuid}` : `/mockups/extended`,
+        query: ( payload ) => ({
+          url: payload?.uuid ? `/mockups/extended?collection_uuid=${payload.uuid}` : `/mockups/extended`,
           method: "GET",
         }),
       }

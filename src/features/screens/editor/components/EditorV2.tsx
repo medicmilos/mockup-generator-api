@@ -11,10 +11,6 @@ interface IEditorV2Props {
 }
 
 interface IAssetFile {
-  design_area_width: number;
-  design_area_height: number;
-  design_area_left: number;
-  design_area_top: number;
   canvasWidth: number;
   canvasHeight: number;
   imageWidth: number;
@@ -40,10 +36,6 @@ export const EditorV2 = ({
   useEffect(() => {
     if (assetFileConfig) {
       setAssetFile({
-        design_area_width: assetFileConfig.width,
-        design_area_height: assetFileConfig.height,
-        design_area_left: assetFileConfig.transformX,
-        design_area_top: assetFileConfig.transformY,
         canvasWidth: assetFileConfig.smartObjectWidth,
         canvasHeight: assetFileConfig.smartObjectHeight,
         imageWidth: assetFileConfig.width,
@@ -55,8 +47,8 @@ export const EditorV2 = ({
     }
   }, [assetFileConfig]);
 
-  useEffect(() => {console.log(assetFile)
-    if (assetFile) {
+  useEffect(() => {
+     if (assetFile) {
       setMoveableKey((prev) => {
         return prev + 1;
       });
@@ -74,10 +66,6 @@ export const EditorV2 = ({
       maxCanvasSize / assetFile.canvasHeight
     );
 
-    // Calculate the scaled dimensions of the design area
-    const scaleddesign_area_width = assetFile.imageWidth * canvasScale;
-    const scaleddesign_area_height = assetFile.imageHeight * canvasScale;
-
     // Calculate the scaled dimensions of the canvas
     const scaledCanvasWidth = assetFile.canvasWidth * canvasScale;
     const scaledCanvasHeight = assetFile.canvasHeight * canvasScale;
@@ -90,17 +78,9 @@ export const EditorV2 = ({
     const scaledImageX = assetFile.imageX * canvasScale;
     const scaledImageY = assetFile.imageY * canvasScale;
 
-    // Calculate the scaled position of the design area
-    const scaleddesign_area_left = assetFile.imageX * canvasScale;
-    const scaleddesign_area_top = assetFile.imageY * canvasScale;
-
     // Set the scaled values
 
     setScaledAssetFile({
-      design_area_height: scaleddesign_area_height,
-      design_area_width: scaleddesign_area_width,
-      design_area_left: scaleddesign_area_left,
-      design_area_top: scaleddesign_area_top,
       canvasWidth: scaledCanvasWidth,
       canvasHeight: scaledCanvasHeight,
       imageWidth: scaledImageWidth,
@@ -114,8 +94,6 @@ export const EditorV2 = ({
   const updateAsset = async (data: Partial<IAssetFileConfig>) => {
     apiCallUpdateAsset(data);
   };
-
-  console.log(scaledAssetFile);
 
   return (
     <Flex
@@ -149,6 +127,9 @@ export const EditorV2 = ({
                 height: scaledAssetFile.imageHeight,
                 top: scaledAssetFile.imageY,
                 left: scaledAssetFile.imageX,
+                transform: `translate(0px, 0px) rotate(${
+                  assetFileConfig?.rotate || 0
+                }deg)`,
               }}
             ></Box>
 
@@ -257,10 +238,10 @@ export const EditorV2 = ({
                 if (!e.lastEvent) return;
 
                 updateAsset({
-                  design_area_width: assetFileConfig.design_area_width,
-                  design_area_height: assetFileConfig.design_area_height,
-                  design_area_left: assetFileConfig.design_area_left,
-                  design_area_top: assetFileConfig.design_area_top,
+                  width: assetFileConfig.width,
+                  height: assetFileConfig.height,
+                  transformX: assetFileConfig.transformX,
+                  transformY: assetFileConfig.transformY,
                   rotate: Math.round(e.lastEvent.rotate),
                 });
               }}

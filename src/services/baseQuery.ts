@@ -32,8 +32,8 @@ const baseQuery = fetchBaseQuery({
 });
 
 const fetchCSRFToken = async () => {
-  // const response = await fetch(`https://httpbin.org/get`, {
-  const response = await fetch(`${baseUrl}csrf-token-endpoint`, {
+  const response = await fetch(`https://httpbin.org/get`, {
+    // const response = await fetch(`${baseUrl}csrf-token-endpoint`, {
     method: "GET",
     headers: {
       "X-API-KEY": store.getState().appReducer.apiKey || "",
@@ -43,8 +43,8 @@ const fetchCSRFToken = async () => {
 
   if (response.ok) {
     const data = await response.json();
-    // return data.origin;
-    return data.csrfToken;
+    return data.origin;
+    // return data.csrfToken;
   }
 
   throw new Error("Failed to fetch CSRF token");

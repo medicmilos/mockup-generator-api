@@ -9,12 +9,15 @@ import {
 import { ReactComponent as TreeSquaresIcon } from "@/assets/icons/three-squares-linear.svg";
 import { CollectionsWidget } from "./collections/CollectionsWidget";
 import { appApi } from "@/services/app";
-import { useAppSelector } from "@/hooks";
+import { useAppDispatch, useAppSelector } from "@/hooks";
 import { SingleTemplate } from "./collections/SingleTemplate";
 import "./home.scss";
 import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { resetAppState } from "@/redux/slices/app";
 
 export const Home = () => {
+  const dispatch = useAppDispatch();
   const { collectionUuid } = useParams();
   const { collections, mockups } = useAppSelector((state) => state.appReducer);
 
@@ -27,6 +30,10 @@ export const Home = () => {
       refetchOnMountOrArgChange: true,
     }
   );
+
+  useEffect(() => {
+    dispatch(resetAppState());
+  }, []);
 
   return (
     <ScrollArea

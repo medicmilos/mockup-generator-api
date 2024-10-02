@@ -4,17 +4,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import { fitModes } from "./types";
 import { IAssetFileConfig } from "@/features/screens/editor/Editor";
 
-interface Project {
-  id: number;
-  uuid: string;
-  user_id: number;
-  name: string;
-  project_id?: number;
-  psd_availability_id: number;
-  psd_category_id: number;
-  thumbnail: string;
-}
-
 type assetFit = "contain" | "cover" | "stretch";
 
 export interface SmartObject {
@@ -27,10 +16,6 @@ export interface SmartObject {
   left: number;
   width: number;
   height: number;
-  global_asset_top: number | null;
-  global_asset_left: number | null;
-  global_asset_width: number | null;
-  global_asset_height: number | null;
   thumbnail: string;
   print_area: 1 | 0;
   fit: assetFit;
@@ -39,7 +24,6 @@ export interface SmartObject {
 interface AppState {
   themeMode: "inherit" | "light" | "dark" | undefined;
   apiKey: string;
-  selectedMockup: IMockup;
   color: string;
   fitMode: fitModes;
   singleRender: { data: SingleRenderRes; isLoading: boolean };
@@ -49,7 +33,6 @@ interface AppState {
     url?: string;
   };
   activeDesignAsset: IAssetFileConfig;
-
   collections: {
     data: ICollection[];
     isLoading: boolean;
@@ -59,6 +42,7 @@ interface AppState {
     isLoading: boolean;
   };
   selectedCollection: string | null;
+  selectedMockup: IMockup | null;
 }
 
 const userPrefferedThemeMode = window.localStorage.getItem("app-theme");
@@ -66,20 +50,14 @@ const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
   ? "dark"
   : "light";
 
-const dynamicMockupsApiKey = localStorage.getItem(
-  "dynamicMockupsApiKey"
-) as string;
-
 const initialState: AppState = {
   themeMode: (userPrefferedThemeMode ||
     systemTheme ||
     "light") as AppState["themeMode"],
   apiKey:
     "aff193c4-4316-43a2-9788-9b3e1a0bb49a:7a26a83b6414720c408bfa65029ef2ab2d7a88695f379ca0ff7dcdc64ba41392",
-
   color: "#5753c6",
   fitMode: "contain",
-  selectedMockup: null!,
   singleRender: {
     data: {
       export_label: "",
@@ -90,29 +68,13 @@ const initialState: AppState = {
   activeSmartObject: null! as any,
   design: {
     file: null!,
-    url: "https://app-dynamicmockups-production.s3.eu-central-1.amazonaws.com/design/257/cat-doing-space-surfing.png",
-  },
-  activeDesignAsset: {
-    id: 2360,
-    design_area_height: 1104,
-    design_area_left: 174,
-    design_area_top: 208,
-    design_area_width: 790,
-    height: 722,
-    rotate: 0,
-    smartObjectHeight: 1457,
-    smartObjectWidth: 1244,
-    transformX: 174,
-    transformY: 399,
     url: "",
-    width: 790,
-
-    left: 174,
-    top: 399,
   },
+  activeDesignAsset: {} as any,
   collections: { data: [], isLoading: true },
   mockups: { data: [], isLoading: true },
   selectedCollection: null,
+  selectedMockup: null,
 };
 
 export const appSlice = createSlice({
@@ -127,7 +89,6 @@ export const appSlice = createSlice({
     },
     setApiKey(state, { payload }) {
       state.apiKey = payload;
-      localStorage.setItem("dynamicMockupsApiKey", payload);
     },
     setSelectedMockup(state, { payload }) {
       state.selectedMockup = payload;
@@ -138,25 +99,11 @@ export const appSlice = createSlice({
     setFitMode(state, { payload }) {
       state.fitMode = payload;
     },
-    updateActiveSmartObject(state, { payload }) {
-      state.activeSmartObject = {
-        ...state.activeSmartObject,
-        print_area: payload.print_area,
-        fit: payload.fit,
-
-        global_asset_top: payload.global_asset_top,
-        global_asset_left: payload.global_asset_left,
-        global_asset_width: payload.global_asset_width,
-        global_asset_height: payload.global_asset_height,
-      };
-    },
     setDesignFile(state, { payload }) {
-      console.log("setDesignFile");
       state.design.file = payload;
       state.design.url = "";
     },
     setDesignUrl(state, { payload }) {
-      console.log("setDesignUrl");
       state.design.url = payload;
       state.design.file = null!;
     },
@@ -166,8 +113,10 @@ export const appSlice = createSlice({
     setSelectedCollection(state, { payload }) {
       state.selectedCollection = payload;
     },
-    resetAppState: (state) => {
-      localStorage.removeItem("dynamicMockupsApiKey");
+    setActiveDesignAsset(state, { payload }) {
+      state.activeDesignAsset = payload;
+    },
+    resetAppState: () => {
       return initialState;
     },
   },
@@ -224,9 +173,9 @@ export const {
   setSelectedMockup,
   setColor,
   setFitMode,
-  updateActiveSmartObject,
   setDesignUrl,
   setDesignFile,
   setActiveSmartObject,
   setSelectedCollection,
+  setActiveDesignAsset,
 } = appSlice.actions;

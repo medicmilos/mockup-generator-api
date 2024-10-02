@@ -1,34 +1,25 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Grid,
-  Tabs,
-  Text,
-  IconButton,
-} from "@radix-ui/themes";
+import { Button, Flex, Grid, Text } from "@radix-ui/themes";
 import { useEffect, useState } from "react";
 import { EditorV2 } from "./components/EditorV2";
 import { Colors } from "./components/Colors";
-import { FitModes } from "./components/FitModes";
-import { CodeEditor } from "./components/CodeEditor";
 import { PreviewImage } from "./components/PreviewImage";
 import { appApi } from "@/services/app";
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import {
-  resetAppState,
+  setActiveDesignAsset,
   setActiveSmartObject,
-  setApiKey,
-  updateActiveSmartObject,
+  setSelectedMockup,
 } from "@/redux/slices/app";
-import { Mockups } from "./components/Mockups";
-import { Cross2Icon } from "@radix-ui/react-icons";
 import { AddDesign } from "./components/AddDessign";
 import { useNavigate, useParams } from "react-router-dom";
 import { ReactComponent as ArrowLeft } from "@/assets/icons/arrow-left.svg";
+import {
+  getImageDimensions,
+  getURLImageDimensions,
+  resizeImageToMaxAllowedSize,
+} from "@/helpers";
 
 export interface IAssetFileConfig {
-  id: number;
   url: string;
   width: number;
   height: number;
@@ -36,10 +27,6 @@ export interface IAssetFileConfig {
   transformY: number;
   smartObjectWidth: number;
   smartObjectHeight: number;
-  design_area_width: number;
-  design_area_height: number;
-  design_area_left: number;
-  design_area_top: number;
   rotate: number;
   left?: number;
   top?: number;
@@ -48,10 +35,6 @@ export interface IAssetFileConfig {
 export interface IActiveSmartObject {
   width: number;
   height: number;
-  global_asset_width: number;
-  global_asset_height: number;
-  global_asset_top: number;
-  global_asset_left: number;
   print_area: number;
   fit: string;
 }
@@ -67,86 +50,157 @@ export const Editor = () => {
   const navigate = useNavigate();
   const { mockupUuid } = useParams();
   const {
-    apiKey,
-    fitMode,
     color,
     selectedMockup,
     activeSmartObject,
     design,
     activeDesignAsset,
+    mockups,
   } = useAppSelector((state) => state.appReducer);
 
-  const [key, setKey] = useState<string>(apiKey);
+  const [assetFileConfig, setAssetFileConfig] = useState<IAssetFileConfig>(
+    null!
+  );
 
   useEffect(() => {
-    setKey(apiKey);
-  }, [apiKey]);
+    if (
+      Object.keys(activeDesignAsset).length !== 0 &&
+      activeDesignAsset.constructor === Object &&
+      activeSmartObject
+    ) {
+      setAssetFileConfig({
+        width: activeDesignAsset.width || 50,
+        height: activeDesignAsset.height || 50,
+        transformX: activeDesignAsset.left || 0,
+        transformY: activeDesignAsset.top || 0,
+        smartObjectWidth: activeSmartObject?.width,
+        smartObjectHeight: activeSmartObject?.height,
+        url: activeDesignAsset?.url,
+        rotate: activeDesignAsset?.rotate || 0,
+      });
+    }
+  }, [activeSmartObject, activeDesignAsset]);
 
-  const [assetFileConfig, setAssetFileConfig] = useState<IAssetFileConfig>({
-    id: 2360,
-    width: activeDesignAsset.width || 50,
-    height: activeDesignAsset.height || 50,
-    transformX: activeDesignAsset.left || 0,
-    transformY: activeDesignAsset.top || 0,
-    design_area_width: activeSmartObject?.global_asset_width || 50,
-    design_area_height: activeSmartObject?.global_asset_height || 50,
-    design_area_left: activeSmartObject?.global_asset_left || 0,
-    design_area_top: activeSmartObject?.global_asset_top || 0,
-    smartObjectWidth: activeSmartObject?.width,
-    smartObjectHeight: activeSmartObject?.height,
-    url: activeDesignAsset?.url,
-    rotate: activeDesignAsset?.rotate || 0,
+  useEffect(() => {
+    async function setDesignFileConfig() {
+      if (design.file) {
+        const designFileDimensions = await getImageDimensions(design.file);
+        const newDesignDimensions = resizeImageToMaxAllowedSize(
+          designFileDimensions.width,
+          designFileDimensions.height,
+          activeSmartObject?.width,
+          activeSmartObject?.height
+        );
+        const data = {
+          width: newDesignDimensions.width,
+          height: newDesignDimensions.height,
+          left: (activeSmartObject?.width - newDesignDimensions.width) / 2,
+          top: (activeSmartObject?.height - newDesignDimensions.height) / 2,
+          rotate: 0,
+        };
+
+        dispatch(setActiveDesignAsset(data));
+      }
+      if (design.url) {
+        getURLImageDimensions(design.url)
+          .then(({ width, height }) => {
+            const newDesignDimensions = resizeImageToMaxAllowedSize(
+              width,
+              height,
+              activeSmartObject?.width,
+              activeSmartObject?.height
+            );
+            const data = {
+              width: newDesignDimensions.width,
+              height: newDesignDimensions.height,
+              left: (activeSmartObject?.width - newDesignDimensions.width) / 2,
+              top: (activeSmartObject?.height - newDesignDimensions.height) / 2,
+              url: activeDesignAsset?.url,
+              rotate: 0,
+            };
+
+            dispatch(setActiveDesignAsset(data));
+          })
+          .catch((error) => {
+            console.error(error.message);
+          });
+      }
+    }
+
+    if (activeSmartObject) {
+      setDesignFileConfig();
+    }
+  }, [design, activeSmartObject]);
+
+  appApi.useGetMockupsQuery(undefined!, {
+    skip: !!selectedMockup,
+    refetchOnMountOrArgChange: true,
   });
 
   useEffect(() => {
-    setAssetFileConfig({
-      id: 2360,
-      width: activeDesignAsset.width || 50,
-      height: activeDesignAsset.height || 50,
-      transformX: activeDesignAsset.left || 0,
-      transformY: activeDesignAsset.top || 0,
-      design_area_width: activeSmartObject?.global_asset_width || 50,
-      design_area_height: activeSmartObject?.global_asset_height || 50,
-      design_area_left: activeSmartObject?.global_asset_left || 0,
-      design_area_top: activeSmartObject?.global_asset_top || 0,
-      smartObjectWidth: activeSmartObject?.width,
-      smartObjectHeight: activeSmartObject?.height,
-      url: activeDesignAsset?.url,
-      rotate: activeDesignAsset?.rotate || 0,
-    });
-  }, [activeSmartObject, activeDesignAsset]);
-
-  // appApi.useGetMockupsQuery(null, {
-  //   skip: !apiKey,
-  //   refetchOnMountOrArgChange: true,
-  // });
+    if (mockups.data.length) {
+      const mockup = mockups.data.find((mockup) => mockup.uuid === mockupUuid);
+      dispatch(setSelectedMockup(mockup));
+    }
+  }, [mockups, mockupUuid]);
 
   const [generateSingleRender, { isLoading: isGenerating }] =
     appApi.useGenerateSingleRenderMutation();
 
-  const getRenderData = () => {
+  const getRenderData = (data?: Partial<IAssetFileConfig>) => {
     const formData = new FormData();
+    let assetConfig: Partial<IAssetFileConfig> = { ...assetFileConfig };
+    if (data) {
+      assetConfig = { ...data };
+    }
 
-    formData.append("mockup_uuid", selectedMockup.uuid);
-    formData.append(`export_label`, "demo render");
-    formData.append(
-      `smart_objects[0][uuid]`,
-      selectedMockup.smart_objects[0].uuid
-    );
-    if (design.file) {
-      formData.append(`smart_objects[0][asset][file]`, design.file);
+    if (selectedMockup) {
+      formData.append("mockup_uuid", selectedMockup.uuid);
+      formData.append(`export_options[image_format]`, "webp");
+      formData.append(`export_options[image_size]`, "480");
+      formData.append(
+        `smart_objects[0][uuid]`,
+        selectedMockup.smart_objects[0].uuid
+      );
+      if (design.file) {
+        formData.append(`smart_objects[0][asset][file]`, design.file);
+      }
+      if (design.url) {
+        formData.append(`smart_objects[0][asset][url]`, design.url);
+      }
+      formData.append(`smart_objects[0][color]`, color);
+
+      if (
+        Object.keys(assetConfig).length !== 0 &&
+        assetConfig.constructor === Object
+      ) {
+        formData.append(
+          `smart_objects[0][asset][size][width]`,
+          assetConfig.width as unknown as string
+        );
+        formData.append(
+          `smart_objects[0][asset][size][height]`,
+          assetConfig.height as unknown as string
+        );
+        formData.append(
+          `smart_objects[0][asset][position][top]`,
+          assetConfig.transformY as unknown as string
+        );
+        formData.append(
+          `smart_objects[0][asset][position][left]`,
+          assetConfig.transformX as unknown as string
+        );
+        formData.append(
+          `smart_objects[0][asset][rotate]`,
+          assetConfig.rotate as unknown as string
+        );
+      }
     }
-    if (design.url) {
-      formData.append(`smart_objects[0][asset][url]`, design.url);
-    }
-    formData.append(`smart_objects[0][asset][fit]`, fitMode);
-    formData.append(`smart_objects[0][color]`, color);
 
     return formData;
   };
 
   const apiCallUpdateAsset = async (data: Partial<IAssetFileConfig>) => {
-    console.log(data);
     setAssetFileConfig((prevObj) => {
       return {
         ...prevObj,
@@ -154,43 +208,24 @@ export const Editor = () => {
       };
     });
 
-    dispatch(
-      updateActiveSmartObject({
-        print_area: activeSmartObject?.print_area,
-        fit: activeSmartObject?.fit,
-        global_asset_top: data.design_area_top,
-        global_asset_left: data.design_area_left,
-        global_asset_width: data.design_area_width,
-        global_asset_height: data.design_area_height,
-      })
-    );
-
-    await generateSingleRender(getRenderData());
+    // await generateSingleRender(getRenderData(data));
   };
 
-  const initThumbRenderImage = async () => {
+  const renderPreviewImage = async () => {
     await generateSingleRender(getRenderData());
   };
 
   useEffect(() => {
-    if (selectedMockup && activeSmartObject && (design.url || design.file)) {
-      initThumbRenderImage();
+    if (selectedMockup && activeSmartObject) {
+      renderPreviewImage();
     }
-  }, [fitMode, color, selectedMockup, activeSmartObject, design]);
+  }, [color, assetFileConfig]);
 
   useEffect(() => {
     if (selectedMockup) {
       dispatch(setActiveSmartObject(selectedMockup.smart_objects[0]));
     }
   }, [selectedMockup]);
-
-  const setApiKeyAction = () => {
-    dispatch(setApiKey(key));
-  };
-
-  const clearApiKeyAction = () => {
-    dispatch(resetAppState());
-  };
 
   return (
     <Grid className={"app"} height={"100%"}>
@@ -217,7 +252,6 @@ export const Editor = () => {
           apiCallUpdateAsset={apiCallUpdateAsset}
         />
         <Colors />
-        <FitModes />
       </Flex>
       <Flex direction={"column"} p={"2"} gap={"4"} className="result-wrapper">
         <PreviewImage />

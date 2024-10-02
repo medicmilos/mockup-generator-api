@@ -5,7 +5,9 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 export interface PreviewImage {}
 
 export const PreviewImage = ({}: PreviewImage) => {
-  const { singleRender } = useAppSelector((state) => state.appReducer);
+  const { singleRender, selectedMockup } = useAppSelector(
+    (state) => state.appReducer
+  );
 
   return (
     <Flex
@@ -24,12 +26,14 @@ export const PreviewImage = ({}: PreviewImage) => {
             effect="blur"
             src={
               singleRender.data.export_path ||
-              "https://placehold.co/800x500?text=IMAGE RENDER"
+              selectedMockup?.thumbnail ||
+              "https://placehold.co/800x500?text=IMAGE"
             }
             delayTime={0}
             placeholderSrc={
               singleRender.data.export_path ||
-              "https://placehold.co/800x500?text=IMAGE RENDER"
+              selectedMockup?.thumbnail ||
+              "https://placehold.co/800x500?text=IMAGE"
             }
           />
         </Flex>
@@ -46,9 +50,15 @@ export const PreviewImage = ({}: PreviewImage) => {
       ) : (
         <LazyLoadImage
           effect="blur"
-          src={"https://placehold.co/800x500?text=IMAGE RENDER"}
+          src={
+            selectedMockup?.thumbnail ||
+            "https://placehold.co/800x500?text=IMAGE"
+          }
           delayTime={0}
-          placeholderSrc={"https://placehold.co/800x500?text=IMAGE RENDER"}
+          placeholderSrc={
+            selectedMockup?.thumbnail ||
+            "https://placehold.co/800x500?text=IMAGE"
+          }
         />
       )}
     </Flex>

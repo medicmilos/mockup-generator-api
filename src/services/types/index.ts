@@ -51,7 +51,16 @@ export interface ICollection {
 export interface IMockup {
   collections: { uuid: string; name: string }[];
   name: string;
-  smart_objects: { uuid: string; name: string }[];
+  smart_objects: {
+    fit: string;
+    height: number;
+    left: number;
+    name: string;
+    print_area: number;
+    top: number;
+    uuid: string;
+    width: number;
+  }[];
   thumbnail: string;
   uuid: string;
 }

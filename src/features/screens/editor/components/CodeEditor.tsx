@@ -50,8 +50,7 @@ fetch(apiUrl, options)
 
   const onChange = useCallback(
     (val: SetStateAction<string>, viewUpdate: any) => {
-      console.log("val:", val);
-      setValue(val);
+       setValue(val);
     },
     []
   );
