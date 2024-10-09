@@ -65,7 +65,7 @@ const initialState: AppState = {
   activeSmartObject: null! as any,
   design: {
     file: null!,
-    url: "",
+    url: "https://dynamicmockups.com/wp-content/uploads/2023/03/design-copilot-logo-rounded.png",
   },
   activeDesignAsset: {} as any,
   collections: { data: [], isLoading: true },

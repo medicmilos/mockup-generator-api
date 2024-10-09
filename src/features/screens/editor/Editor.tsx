@@ -1,4 +1,4 @@
-import { Button, Flex, Grid, Text } from "@radix-ui/themes";
+import { Box, Button, Flex, Grid, Text } from "@radix-ui/themes";
 import { useEffect, useState } from "react";
 import { EditorV2 } from "./components/EditorV2";
 import { Colors } from "./components/Colors";
@@ -226,9 +226,22 @@ export const Editor = () => {
   }, [selectedMockup]);
 
   return (
-    <Grid className={"app"} height={"100%"}>
-      <Flex direction={"column"} p={"4"} gap={"4"} className="editor">
-        <Flex gap={"5"} px={"2"} align={"center"}>
+    <Grid className={"app"} gap={"6"} height={"100%"}>
+      <Box className="back-button">
+        <Button variant="solid" size={"1"} onClick={() => navigate(`/`)}>
+          <ArrowLeft width="24px" height="24px" className="icon" />
+        </Button>
+      </Box>
+      <Flex direction={"column"} className="render-preview">
+        <PreviewImage />
+      </Flex>
+      <Flex direction={"column"} className="editor-toolbar">
+        <Flex className="head" align={"center"} justify={"end"} p={"3"}>
+          <Button variant="solid" color="blue" size={"3"}>
+            Export Mockups
+          </Button>
+        </Flex>
+        {/* <Flex gap={"5"} px={"2"} align={"center"}>
           <Button
             variant="ghost"
             color="gray"
@@ -245,14 +258,19 @@ export const Editor = () => {
           </Text>
         </Flex>
         <AddDesign />
-        <EditorV2
-          assetFileConfig={assetFileConfig}
-          apiCallUpdateAsset={apiCallUpdateAsset}
-        />
-        <Colors />
-      </Flex>
-      <Flex direction={"column"} p={"2"} gap={"4"} className="result-wrapper">
-        <PreviewImage />
+        */}
+        <Flex className="content" direction={"column"} gap={"7"}>
+          <Flex direction={"column"} gap={"5"}>
+            <Text size={"2"} className="tool-title">
+              Artwork
+            </Text>
+            <EditorV2
+              assetFileConfig={assetFileConfig}
+              apiCallUpdateAsset={apiCallUpdateAsset}
+            />
+          </Flex>
+          <Colors />
+        </Flex>
       </Flex>
     </Grid>
   );

@@ -1,6 +1,7 @@
 import { useAppDispatch, useAppSelector } from "@/hooks";
 import { setColor } from "@/redux/slices/app";
-import { Flex, SegmentedControl, Text } from "@radix-ui/themes";
+import { Flex, IconButton, SegmentedControl, Text } from "@radix-ui/themes";
+import { ReactComponent as AddLinearIcon } from "@/assets/icons/add-linear.svg";
 
 export interface Colors {}
 
@@ -13,8 +14,15 @@ export const Colors = ({}: Colors) => {
   };
 
   return (
-    <Flex direction={"column"} gap={"2"}>
-      <Text size={"2"}>Color:</Text>
+    <Flex direction={"column"} gap={"5"}>
+      <Flex align={"center"} justify={"between"}>
+        <Text size={"2"} className="tool-title">
+          Color options
+        </Text>
+        <IconButton variant={"ghost"} size={"1"} color="gray">
+          <AddLinearIcon width="26px" height="26px" className="icon" />
+        </IconButton>
+      </Flex>
       <SegmentedControl.Root
         defaultValue={color}
         onValueChange={(val) => setColorAction(val)}

@@ -14,13 +14,11 @@
     aspect-ratio: 1 / 1;
     box-sizing: border-box;
     overflow: hidden;
-    background: var(--slate-1);
-    border-radius: 4px;
-    border: 1px solid var(--slate-7);
-
-    background-image: radial-gradient(var(--slate-7) 1px, transparent 0);
+    background: var(--slate-2);
+    border-radius: 6px;
+    background-image: radial-gradient(var(--slate-a6) 2px, transparent 0);
     background-size: 24px 24px;
-    background-position: -28px -28px;
+    background-position: -24px -24px;
   }
 
   .target-design-asset-contain {
