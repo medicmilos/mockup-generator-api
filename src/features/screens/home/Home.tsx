@@ -15,11 +15,16 @@ import "./home.scss";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { resetAppState } from "@/redux/slices/app";
+import usePostMessage from "@/hooks/usePostMessage";
 
 export const Home = () => {
   const dispatch = useAppDispatch();
   const { collectionUuid } = useParams();
   const { collections, mockups } = useAppSelector((state) => state.appReducer);
+
+  const receivedData = usePostMessage();
+
+  console.log({ receivedData });
 
   appApi.useGetMockupsQuery(
     {
